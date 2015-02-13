@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ 
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>output.log</file>
+    <append>true</append>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+
+  <!-- 
+  	<logger name="nl.idgis.publisher.provider" level="debug"/>
+  -->
+   
+  <!--   
+  	<logger name="nl.idgis.publisher.provider.App" level="debug"/>
+  -->  
+
+  <!-- 
+  	<logger name="nl.idgis.publisher.provider.metadata" level="debug"/>
+  -->
+  
+  <!-- 
+  	<logger name="nl.idgis.publisher.database" level="debug"/>
+  -->
+  
+  <!-- 
+  	<logger name="nl.idgis.publisher.provider.database" level="debug"/>
+   -->
+   
+  <!-- 
+  	<logger name="nl.idgis.publisher.protocol.SSLHandler" level="debug"/>
+  -->
+  
+  <!-- 
+  	<logger name="nl.idgis.publisher.protocol.MessageProtocolHandler" level="debug"/>
+  -->
+  <root level="info">
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>
