@@ -16,6 +16,19 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
+
+				<!-- 
+				<configuration>				
+					<resources>
+						<resource>
+							<targetPath>/playapp</targetPath>
+							<directory>${project.build.directory}/path/to/zip</directory>
+							<include>geopublisher-web.zip</include>
+						</resource>
+					</resources>
+				</configuration>		
+				-->
+					
 			</plugin>
 		</plugins>
 	</build>

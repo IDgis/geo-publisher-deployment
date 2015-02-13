@@ -1,5 +1,1 @@
-FROM ubuntu:trusty
-
-# Install Apache 2:
-RUN apt-get update && \
-	apt-get -qy upgrade
+FROM docker-postgis:0.0.1-SNAPSHOT
