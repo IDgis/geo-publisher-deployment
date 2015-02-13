@@ -1,0 +1,1 @@
+FROM docker-postgis:0.0.1-SNAPSHOT

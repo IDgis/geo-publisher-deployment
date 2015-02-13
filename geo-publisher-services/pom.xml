@@ -1,14 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>nl.idgis.publisher.deployment</groupId>
-	<artifactId>services</artifactId>
+	<artifactId>geo-publisher-services</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
 	<packaging>pom</packaging>
-
+	<name>Geo Publisher deployment</name>
+	
+	<parent>
+		<groupId>nl.idgis.sys</groupId>
+		<artifactId>docker</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+		
 	<repositories>
 		<repository>
 			<id>idgis-public</id>
@@ -54,4 +58,11 @@
 			<url>http://nexus.idgis.eu/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+		
+	<modules>
+		<module>geo-publisher-postgis</module>
+		<module>geo-publisher-web</module>
+		<module>geo-publisher-service</module>
+		<module>geo-publisher-geoserver</module>
+	</modules>
 </project>
