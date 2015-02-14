@@ -26,4 +26,4 @@ RUN unzip -d /opt /opt/publisher-web.zip && \
 COPY /geo-publisher.sh /opt/geo-publisher.sh
 RUN chmod +x /opt/geo-publisher.sh
 
-# CMD ["/opt/geopublisher-web/bin/start.sh"]
+CMD ["/opt/geo-publisher.sh"]
