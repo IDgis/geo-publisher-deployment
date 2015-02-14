@@ -7,6 +7,10 @@
 	<packaging>pom</packaging>
 	<name>Geo Publisher deployment</name>
 	
+	<properties>
+		<geo-publisher.version>0.0.1-SNAPSHOT</geo-publisher.version>
+	</properties>
+	
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
@@ -65,4 +69,18 @@
 		<module>geo-publisher-service</module>
 		<module>geo-publisher-geoserver</module>
 	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+			<!-- Geo publisher dependencies: -->
+			<dependency>
+				<groupId>nl.idgis.publisher</groupId>
+				<artifactId>publisher-web</artifactId>
+				<type>zip</type>
+				<classifier>app</classifier>
+				<version>${geo-publisher.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 </project>

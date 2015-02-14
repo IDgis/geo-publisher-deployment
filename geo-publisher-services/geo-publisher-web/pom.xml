@@ -13,24 +13,70 @@
 	
 	<build>
 		<plugins>
+			<!-- Copy the Play dependency: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>copy-play-app</id>
+						
+						<goals><goal>copy</goal></goals>
+						<phase>package</phase>
+						
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>nl.idgis.publisher</groupId>
+									<artifactId>publisher-web</artifactId>
+									<type>zip</type>
+									<classifier>app</classifier>
+								</artifactItem>
+							</artifactItems>
+							
+							<outputDirectory>${project.build.directory}/play-app/</outputDirectory>
+							<overWriteRelease>false</overWriteRelease>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Build the Docker image: -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 
-				<!-- 
-				<configuration>				
-					<resources>
-						<resource>
-							<targetPath>/playapp</targetPath>
-							<directory>${project.build.directory}/path/to/zip</directory>
-							<include>geopublisher-web.zip</include>
-						</resource>
-					</resources>
-				</configuration>		
-				-->
-					
+				<!-- Augment the execution with extra configuration: add resources. -->
+				<executions>
+					<execution>
+						<phase>package</phase>				
+						<goals><goal>build</goal></goals>
+						
+						<configuration>				
+							<resources>
+								<resource>
+									<targetPath>/opt/publisher-web/</targetPath>
+									<directory>${project.build.directory}/play-app/</directory>
+									<include>publisher-web-${geo-publisher.version}-app.zip</include>
+								</resource>
+							</resources>
+						</configuration>		
+					</execution>
+				</executions>
+
 			</plugin>
 		</plugins>
 	</build>
 	
+	<dependencies>
+		<dependency>
+			<groupId>nl.idgis.publisher</groupId>
+			<artifactId>publisher-web</artifactId>
+			<type>zip</type>
+			<classifier>app</classifier>
+		</dependency>
+	</dependencies>
 </project>
