@@ -32,6 +32,7 @@
 									<artifactId>publisher-web</artifactId>
 									<type>zip</type>
 									<classifier>app</classifier>
+									<destFileName>publisher-web.zip</destFileName>
 								</artifactItem>
 							</artifactItems>
 							
@@ -58,9 +59,9 @@
 						<configuration>				
 							<resources>
 								<resource>
-									<targetPath>/opt/publisher-web/</targetPath>
+									<targetPath>/opt/</targetPath>
 									<directory>${project.build.directory}/play-app/</directory>
-									<include>publisher-web-${geo-publisher.version}-app.zip</include>
+									<include>publisher-web.zip</include>
 								</resource>
 							</resources>
 						</configuration>		
