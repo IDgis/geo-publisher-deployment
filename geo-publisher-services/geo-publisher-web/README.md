@@ -17,6 +17,7 @@
 Containers using this image expose the following ports:
 
 - ``9000``: the HTTP-port on which the application is accessible.
+- ``2552``: the port for Akka remoting
 
 ## Container deployment
 
