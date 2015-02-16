@@ -1,13 +1,15 @@
 FROM ubuntu:utopic
 
 # Setup environment:
+ENV PUBLISHER_WEB_SECRET="9x`_ocB`=p:vPZciT;rDZNcwbb?BZ4ahX?SbT1fmrmdk:kS9GuV]UStrH2W@im6O"
 ENV PUBLISHER_WEB_AKKA_HOST web
 ENV PUBLISHER_WEB_AKKA_PORT 2552
 ENV PUBLISHER_WEB_DATABASE_REF akka.tcp://service@service:2552/user/app/admin
-ENV PUBLISHER_WEB_ADMIN_USERNAME admin
+ENV PUBLISHER_WEB_ADMIN_USERNAME admin@idgis.nl
 ENV PUBLISHER_WEB_ADMIN_PASSWORD admin
 ENV PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT 5
 ENV PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT 5
+ENV PUBLISHER_WEB_JAVA_OPTS=""
 
 # Install Apache 2:
 RUN apt-get update && \
@@ -24,6 +26,11 @@ RUN unzip -d /opt /opt/publisher-web.zip && \
 
 # Copy the start script:
 COPY /geo-publisher.sh /opt/geo-publisher.sh
-RUN chmod +x /opt/geo-publisher.sh
+RUN chmod +x /opt/geo-publisher.sh && \
+	chmod +x /opt/geo-publisher/bin/publisher-web
 
+# Expose network port:
+EXPOSE 9000
+
+# Start the Play application:
 CMD ["/opt/geo-publisher.sh"]
