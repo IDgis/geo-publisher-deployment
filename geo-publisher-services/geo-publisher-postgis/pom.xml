@@ -19,4 +19,12 @@
 		</plugins>
 	</build>
 	
+	<dependencies>
+		<dependency>
+			<groupId>nl.idgis.publisher</groupId>
+			<artifactId>publisher-database</artifactId>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+	
 </project>
