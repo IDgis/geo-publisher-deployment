@@ -86,6 +86,12 @@
 				<type>jar</type>
 				<version>${geo-publisher.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>nl.idgis.publisher</groupId>
+				<artifactId>publisher-database</artifactId>
+				<type>jar</type>
+				<version>${geo-publisher.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	

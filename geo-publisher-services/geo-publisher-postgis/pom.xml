@@ -12,11 +12,70 @@
 	
 	<build>
 		<plugins>
+			<!-- Unpack the database dependency: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>unpack-database-jar</id>
+						<phase>package</phase>
+						<goals>	
+							<goal>unpack</goal>
+						</goals>
+						
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>nl.idgis.publisher</groupId>
+									<artifactId>publisher-database</artifactId>
+									<type>jar</type>
+								</artifactItem>
+							</artifactItems>
+							
+							<includes>**/*.sql</includes>
+							<outputDirectory>${project.build.directory}/sqls</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Build the Docker image: -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
+				
+				<!-- Augment the execution with extra configuration: add SQL's. -->
+				<executions>
+					<execution>
+						<phase>package</phase>				
+						<goals><goal>build</goal></goals>
+						
+						<configuration>				
+							<resources>
+								<resource>
+									<targetPath>/sql/</targetPath>
+									<directory>${project.build.directory}/sqls/nl/idgis/publisher/database/</directory>
+									<include>*.sql</include>
+								</resource>
+							</resources>
+						</configuration>		
+					</execution>
+				</executions>
+				
 			</plugin>
 		</plugins>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>nl.idgis.publisher</groupId>
+			<artifactId>publisher-database</artifactId>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
 	
 </project>
