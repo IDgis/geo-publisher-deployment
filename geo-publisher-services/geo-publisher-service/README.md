@@ -8,10 +8,14 @@
 - ``PUBLISHER_DATABASE_PASSWORD``: password of the database user. Should be set to a non-default value.
 - ``PUBLISHER_GEOSERVER_USER``: username to access the REST interface of the Geoserver instance. Default value: ``admin``.
 - ``PUBLISHER_GEOSERVER_PASSWORD``: password used to access the REST interface of the Geoserver instance. Should be set to a non-default value.
+- ``PUBLISHER_GEOSERVER_SCHEMA``: the geoserver schema. Default value: ``staging_data``.
 - ``PUBLISHER_SERVICE_HARVESTER_SSL_PRIVATE_PASSWORD``: password used to access the private keystore for the harvester. Should be set to a non-default value.
 - ``PUBLISHER_SERVICE_HARVESTER_SSL_TRUSTED_PASSWORD``: password used to access the trusted keystore for the harvester. Should be set to a non-default value.
 - ``PUBLISHER_SERVICE_MONITOR_SHOWTREES``: Default value: ``true``.
 - ``PUBLISHER_SERVICE_JAVA_OPTS``: additional options passed to the JVM running the publisher service (e.g. ``-D...``) not covered by any of the environment variables described above.
+- ``PUBLISHER_SERVICE_METADATA_OPERATESON``: the operates on property in generated metadata. Default value: ``https://overijssel.geo-hosting.nl/metadata/dataset/``.
+- ``PUBLISHER_SERVICE_METADATA_WMS``: the online resource for WMS in generated metadata. Default value: ``https://overijssel.geo-hosting.nl/geoserver/wms?``.
+- ``PUBLISHER_SERVICE_METADATA_WFS``: the online resource for WFS in generated metadata. Default value: ``https://overijssel.geo-hosting.nl/geoserver/wfs?``.
 
 ## Required hosts/containers
 
