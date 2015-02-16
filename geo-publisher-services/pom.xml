@@ -9,6 +9,7 @@
 	
 	<properties>
 		<geo-publisher.version>0.0.1-SNAPSHOT</geo-publisher.version>
+		<geoserver.version>2.6.2</geoserver.version>
 	</properties>
 	
 	<parent>
