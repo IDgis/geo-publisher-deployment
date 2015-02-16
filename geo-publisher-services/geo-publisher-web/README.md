@@ -17,3 +17,20 @@
 Containers using this image expose the following ports:
 
 - ``9000``: the HTTP-port on which the application is accessible.
+
+## Container deployment
+
+The publisher-web container needs a hostname and a reference to the container running the backend.
+
+Example deployment:
+```
+docker run \
+  --name geo-publisher-web \
+  --restart=always \
+  -d \
+  --link <backend-container-name>:service \
+  -h web \
+  -e PUBLISHER_WEB_ADMIN_USERNAME=<username> \
+  -e PUBLISHER_WEB_ADMIN_PASSWORD=<password> \
+  geo-publisher-web:<version>
+```
