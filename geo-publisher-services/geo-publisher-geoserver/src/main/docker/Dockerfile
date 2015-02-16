@@ -8,6 +8,8 @@ RUN apt-get update && \
 		tomcat7
 
 # Environment variables:
+ENV PUBLISHER_GEOSERVER_USERNAME="admin"
+ENV PUBLISHER_GEOSERVER_PASSWORD="admin"
 ENV PUBLISHER_GEOSERVER_JAVA_OPTS=""
 
 ENV GEOSERVER_DATA_DIR="/var/lib/geo-publisher/geoserver"
@@ -19,17 +21,19 @@ ENV JAVA_OPTS="-Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=256m"
 
 # Copy the jar and start script:
 COPY /wars/*.war /var/lib/tomcat7/webapps/
+COPY /start.sh /opt/start.sh
 
 # Set permissions and create data directory:
-RUN mkdir -p $CATALINA_TMPDIR && \
+RUN chmod +x /opt/start.sh && \
+	mkdir -p $CATALINA_TMPDIR && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR && \ 
 	mkdir -p $GEOSERVER_DATA_DIR && \
 	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR
-
+	
 # Run the command as the geoserver user:
 USER tomcat7
 
 # Expose network ports:
 EXPOSE 8080
 
-CMD ["/usr/share/tomcat7/bin/catalina.sh", "run"]
+CMD ["/opt/start.sh"]
