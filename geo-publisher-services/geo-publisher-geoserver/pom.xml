@@ -10,13 +10,85 @@
 	<packaging>pom</packaging>
 	<name>Geo Publisher deployment - Geoserver</name>
 
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>boundless</id>
+			<name>Boundless Maven Repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
+		</repository>	
+	</repositories>
+	
 	<build>
 		<plugins>
+			<!-- Copy the Geoserver dependency: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>copy-geoserver-war</id>
+						
+						<goals><goal>copy</goal></goals>
+						<phase>package</phase>
+						
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.geoserver.web</groupId>
+									<artifactId>gs-web-app</artifactId>
+									<version>${geoserver.version}</version>
+									<type>war</type>
+									<destFileName>geoserver.war</destFileName>
+								</artifactItem>
+							</artifactItems>
+							
+							<outputDirectory>${project.build.directory}/wars/</outputDirectory>
+							<overWriteRelease>false</overWriteRelease>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Build the Docker image: -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
+				
+				<!-- Augment the execution with extra configuration: add resources. -->
+				<executions>
+					<execution>
+						<phase>package</phase>				
+						<goals><goal>build</goal></goals>
+						
+						<configuration>				
+							<resources>
+								<resource>
+									<targetPath>/wars/</targetPath>
+									<directory>${project.build.directory}/wars/</directory>
+									<include>*.war</include>
+								</resource>
+							</resources>
+						</configuration>		
+					</execution>
+				</executions>
+				
 			</plugin>
 		</plugins>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.geoserver.web</groupId>
+			<artifactId>gs-web-app</artifactId>
+			<version>${geoserver.version}</version>
+			<type>war</type>
+		</dependency>
+	</dependencies>
 
 </project>
