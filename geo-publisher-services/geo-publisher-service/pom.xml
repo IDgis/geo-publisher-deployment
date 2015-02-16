@@ -13,11 +13,70 @@
 	
 	<build>
 		<plugins>
+			<!-- Copy the Play dependency: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>copy-service-jar</id>
+						
+						<goals><goal>copy</goal></goals>
+						<phase>package</phase>
+						
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>nl.idgis.publisher</groupId>
+									<artifactId>publisher-service</artifactId>
+									<type>jar</type>
+									<destFileName>publisher-service.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+							
+							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
+							<overWriteRelease>false</overWriteRelease>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Create the Docker image: -->		
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
+				
+				<!-- Augment the execution with extra configuration: add resources. -->
+				<executions>
+					<execution>
+						<phase>package</phase>				
+						<goals><goal>build</goal></goals>
+						
+						<configuration>				
+							<resources>
+								<resource>
+									<targetPath>/jars/</targetPath>
+									<directory>${project.build.directory}/jars/</directory>
+									<include>*.jar</include>
+								</resource>
+							</resources>
+						</configuration>		
+					</execution>
+				</executions>
+				
 			</plugin>
 		</plugins>
 	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>nl.idgis.publisher</groupId>
+			<artifactId>publisher-service</artifactId>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
 	
 </project>

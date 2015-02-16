@@ -2,8 +2,7 @@ FROM ubuntu:utopic
 
 # Setup environment:
 ENV PUBLISHER_WEB_SECRET="9x`_ocB`=p:vPZciT;rDZNcwbb?BZ4ahX?SbT1fmrmdk:kS9GuV]UStrH2W@im6O"
-ENV PUBLISHER_WEB_AKKA_HOST web
-ENV PUBLISHER_WEB_AKKA_PORT 2552
+ENV PUBLISHER_WEB_HOST web
 ENV PUBLISHER_WEB_DATABASE_REF akka.tcp://service@service:2552/user/app/admin
 ENV PUBLISHER_WEB_ADMIN_USERNAME admin@idgis.nl
 ENV PUBLISHER_WEB_ADMIN_PASSWORD admin
@@ -31,6 +30,7 @@ RUN chmod +x /opt/geo-publisher.sh && \
 
 # Expose network port:
 EXPOSE 9000
+EXPOSE 2552
 
 # Start the Play application:
 CMD ["/opt/geo-publisher.sh"]
