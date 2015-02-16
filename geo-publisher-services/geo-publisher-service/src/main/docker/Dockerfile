@@ -25,6 +25,7 @@ RUN chmod +x /opt/geo-publisher/publisher-service.sh
 
 # Expose network ports:
 EXPOSE 2552
+EXPOSE 4242
 
 # Start the service:
 CMD ["/opt/geo-publisher/publisher-service.sh"]
