@@ -6,7 +6,7 @@ function writeVhostStart {
 		<VirtualHost *:80>
 			ServerName $1
 			
-			DocumentRoot /var/www/overijssel.geo-hosting.nl
+			DocumentRoot /var/www/geo-publisher
 			
 			<Location />
 				Options -Indexes

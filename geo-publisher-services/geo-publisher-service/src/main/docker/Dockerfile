@@ -7,10 +7,10 @@ RUN apt-get update && \
 		openjdk-8-jre-headless
 
 # Environment variables:
+ENV PG_USER="publisher"
+ENV PG_PASSWORD="publisher"
 ENV PUBLISHER_SERVICE_HOSTNAME="service"
 ENV PUBLISHER_SERVICE_AKKA_LOGLEVEL="DEBUG"
-ENV PUBLISHER_DATABASE_USER="publisher"
-ENV PUBLISHER_DATABASE_PASSWORD="publisher"
 ENV PUBLISHER_GEOSERVER_USER="admin"
 ENV PUBLISHER_GEOSERVER_PASSWORD="geoserver"
 ENV PUBLISHER_GEOSERVER_SCHEMA="staging_data"
@@ -27,9 +27,24 @@ COPY /jars/publisher-service.jar /opt/geo-publisher/publisher-service.jar
 COPY /publisher-service.sh /opt/geo-publisher/
 RUN chmod +x /opt/geo-publisher/publisher-service.sh
 
+# Create user and group:
+RUN addgroup publisher-service && \
+	adduser --system --disabled-password --disabled-login --ingroup publisher-service --no-create-home publisher-service
+	
+# Create metadata folders:
+RUN mkdir -p /var/www/geo-publisher/metadata/service-source && \
+	mkdir -p /var/www/geo-publisher/metadata/dataset-target && \
+	mkdir -p /var/www/geo-publisher/metadata/service-target && \
+	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/service-source && \
+	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/dataset-target && \
+	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/service-target
+
 # Expose network ports:
 EXPOSE 2552
 EXPOSE 4242
+
+# Run the service as the publisher-service user:
+USER publisher-service
 
 # Start the service:
 CMD ["/opt/geo-publisher/publisher-service.sh"]

@@ -3,8 +3,6 @@
 ## Environment variables
 
 - ``PUBLISHER_WEB_SECRET``: the Play "secret" to use. This property should always be overridden with a non-default value for public deployments.
-- ``PUBLISHER_WEB_HOST``: the hostname to use for Akka remoting. This is the host on which the actorsystem in this container is accessible to other containers. The hostname of the containerer running publisher-web should also be set to this value. Default value: ``web``.
-- ``PUBLISHER_WEB_DATABASE_REF``: actor reference used by publisher-web to access the backend. Default value: ``akka.tcp://service@service:2552/user/app/admin``.
 - ``PUBLISHER_WEB_ADMIN_USERNAME``: username to use when logging in to the admin interface. Default value: ``admin@idgis.nl``. Use a non-default value for public deployments.
 - ``PUBLISHER_WEB_ADMIN_PASSWORD``: password to use when logging in to the admin interface. Use a non-default value for public deployments.
 - ``PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT``: the number of errors to display on the dashboard page. Default value: ``5``.
