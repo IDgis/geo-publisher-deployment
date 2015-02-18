@@ -22,6 +22,7 @@ ENV JAVA_OPTS="-Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=256m"
 # Copy the jar and start script:
 COPY /wars/*.war /var/lib/tomcat7/webapps/
 COPY /start.sh /opt/start.sh
+COPY /server.xml /var/lib/tomcat7/conf/server.xml
 
 # Set permissions and create data directory:
 RUN chmod +x /opt/start.sh && \
@@ -35,5 +36,6 @@ USER tomcat7
 
 # Expose network ports:
 EXPOSE 8080
+EXPOSE 8009
 
 CMD ["/opt/start.sh"]

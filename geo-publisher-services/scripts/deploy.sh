@@ -3,8 +3,8 @@
 set -e
 
 # Test parameters:
-if [[ $# < 1 ]]; then
-	echo "Usage: $0 [deploy version]"
+if [[ $# < 2 ]]; then
+	echo "Usage: $0 [deploy version] [settings file]"
 	exit 1
 fi
 
@@ -35,6 +35,10 @@ PUBLISHER_GEOSERVER_PASSWORD="admin"
 PUBLISHER_GEOSERVER_DOMAIN="localhost"
 PUBLISHER_WEB_DOMAIN="localhost"
 
+# Settings file:
+echo "Reading settings from $2 ..."
+source $2
+ 
 DOCKER_ENV="-e PG_USER=\"$PG_USER\" -e PG_PASSWORD=\"$PG_PASSWORD\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_DATA_SOURCE_ID=\"$PUBLISHER_DATA_SOURCE_ID\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_DATA_SOURCE_NAME=\"$PUBLISHER_DATA_SOURCE_NAME\""
@@ -122,7 +126,7 @@ echo "----------------------------"
 create_data_container geo-publisher-dv-service-sslconf "docker run --name geo-publisher-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
 create_data_container geo-publisher-dv-service-metadata "docker run --name geo-publisher-dv-service-metadata -d -v /var/www/geo-publisher/metadata geo-publisher-service:$VERSION true"
  
-create_container geo-publisher-service "docker run --name geo-publisher-service -h service -d --volumes-from geo-publisher-dv-service-sslconf --volumes-from geo-publisher-dv-service-metadata --link geo-publisher-db:db --link geo-publisher-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container geo-publisher-service "docker run --name geo-publisher-service -p 4242:4242 -h service -d --volumes-from geo-publisher-dv-service-sslconf --volumes-from geo-publisher-dv-service-metadata --link geo-publisher-db:db --link geo-publisher-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"

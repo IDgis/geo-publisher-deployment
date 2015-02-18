@@ -6,6 +6,18 @@
 - ``PUBLISHER_DATA_SOURCE_ID``: ID of the default datasource. A datasource with this ID is added after creating or updating the database. Default value: ``my-provider-name``.
 - ``PUBLISHER_DATA_SOURCE_NAME``: name of the default datasource. A datasource with this name is added after creating or updating the database. Default value: ``My Provider Name``.
 
+## Copy certificates
+
+```
+docker run \ 
+	--rm \
+	--volumes-from geo-publisher-dv-service-sslconf \ 
+	-v /path/to/local/certs:/opt/certs \
+	geo-publisher-service:$VERSION \
+	sh -c
+		'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
+```
+
 ## Setting up the database
 
 The database requires two data-only volumes for data and logs, these are created first:
