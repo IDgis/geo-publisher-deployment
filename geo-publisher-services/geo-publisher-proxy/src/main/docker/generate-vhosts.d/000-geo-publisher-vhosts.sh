@@ -6,7 +6,18 @@ function writeVhostStart {
 		<VirtualHost *:80>
 			ServerName $1
 			
-			DocumentRoot /var/www/overijssel.geo-hosting.nl
+			Redirect permanent / https://$1/
+		</VirtualHost>
+		
+		<VirtualHost *:443>
+			ServerName $1
+			
+			SSLEngine On
+			SSLCertificateFile /etc/ssl/certs/cert.pem
+			SSLCertificateKeyFile /etc/ssl/private/private.key
+			SSLCACertificateFile /opt/certs/cabundle.pem
+			
+			DocumentRoot /var/www/geo-publisher
 			
 			<Location />
 				Options -Indexes
