@@ -15,7 +15,7 @@ function writeVhostStart {
 			SSLEngine On
 			SSLCertificateFile /etc/ssl/certs/cert.pem
 			SSLCertificateKeyFile /etc/ssl/private/private.key
-			SSLCACertificateFile /opt/certs/cabundle.pem
+			SSLCertificateChainFile /opt/certs/cabundle.pem
 			
 			DocumentRoot /var/www/geo-publisher
 			
@@ -55,6 +55,22 @@ function writeWeb {
 		ProxyPassReverse /		http://web:9000/
 EOT
 }
+
+cat >> /etc/apache2/sites-available/000-default.conf <<-EOT
+<VirtualHost *:80>
+	RedirectMatch permanent (.*)$ https://$PUBLISHER_WEB_DOMAIN/
+</VirtualHost>
+<VirtualHost *:443>
+	RedirectMatch permanent (.*)$ https://$PUBLISHER_WEB_DOMAIN/
+	
+	SSLEngine On
+	SSLCertificateFile /etc/ssl/certs/cert.pem
+	SSLCertificateKeyFile /etc/ssl/private/private.key
+	SSLCACertificateFile /opt/certs/cabundle.pem
+</VirtualHost>
+EOT
+a2ensite 000-default
+a2dissite default-ssl
 
 if [ "$PUBLISHER_GEOSERVER_DOMAIN" == "$PUBLISHER_WEB_DOMAIN" ]; then
 	# Write to the same vhost file:
