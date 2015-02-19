@@ -6,6 +6,16 @@ function writeVhostStart {
 		<VirtualHost *:80>
 			ServerName $1
 			
+			Redirect permanent / https://$1/
+		</VirtualHost>
+		
+		<VirtualHost *:443>
+			ServerName $1
+			
+			SSLEngine On
+			SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+			SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+			
 			DocumentRoot /var/www/geo-publisher
 			
 			<Location />

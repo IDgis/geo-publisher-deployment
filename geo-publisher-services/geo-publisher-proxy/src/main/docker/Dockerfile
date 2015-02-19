@@ -6,7 +6,9 @@ ENV PUBLISHER_WEB_DOMAIN="overijssel.geo-hosting.nl"
 
 # Enable additional modules:
 RUN a2enmod dav && \
-	a2enmod dav_fs
+	a2enmod dav_fs && \
+	a2enmod ssl && \
+	a2enmod alias
 	
 # Copy scripts:
 COPY /generate-vhosts.d/* /opt/generate-vhosts.d/
