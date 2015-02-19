@@ -4,8 +4,8 @@
 
 - ``PUBLISHER_SERVICE_HOSTNAME``: hostname of the publisher service container. Default value: ``service``.
 - ``PUBLISHER_SERVICE_AKKA_LOGLEVEL``: loglevel of the Akka actorsystem. Default value: ``DEBUG``.
-- ``PUBLISHER_DATABASE_USER``: name of the database user. Default value: ``publisher``.
-- ``PUBLISHER_DATABASE_PASSWORD``: password of the database user. Should be set to a non-default value.
+- ``PG_USER``: name of the database user. Default value: ``publisher``.
+- ``PG_PASSWORD``: password of the database user. Should be set to a non-default value.
 - ``PUBLISHER_GEOSERVER_USER``: username to access the REST interface of the Geoserver instance. Default value: ``admin``.
 - ``PUBLISHER_GEOSERVER_PASSWORD``: password used to access the REST interface of the Geoserver instance. Should be set to a non-default value.
 - ``PUBLISHER_GEOSERVER_SCHEMA``: the geoserver schema. Default value: ``staging_data``.
@@ -29,6 +29,7 @@ The following hosts must be present as references to other containers:
 The following directories should be available as a data-volume:
 
 - ``/etc/geo-publisher/ssl``: directory containing the SSL key stores ``private.jks`` and ``trusted.jks``.
+- ``/var/www/geo-publisher/metadata/``: directory where service metadata is stored. Is exposed in the proxy using apache.
 
 ## Exposed ports
 
