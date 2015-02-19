@@ -31,13 +31,15 @@ RUN chmod +x /opt/geo-publisher/publisher-service.sh
 RUN addgroup publisher-service && \
 	adduser --system --disabled-password --disabled-login --ingroup publisher-service --no-create-home publisher-service
 	
-# Create metadata folders:
+# Create metadata and configuration folders:
 RUN mkdir -p /var/www/geo-publisher/metadata/service-source && \
 	mkdir -p /var/www/geo-publisher/metadata/dataset-target && \
 	mkdir -p /var/www/geo-publisher/metadata/service-target && \
+	mkdir -p /etc/geo-publisher/ssl && \
 	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/service-source && \
 	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/dataset-target && \
-	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/service-target
+	chown publisher-service:publisher-service /var/www/geo-publisher/metadata/service-target && \
+	chown publisher-service:publisher-service /etc/geo-publisher/ssl
 
 # Expose network ports:
 EXPOSE 2552

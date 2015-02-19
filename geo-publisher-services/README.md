@@ -8,6 +8,10 @@
 
 ## Copy certificates
 
+The publisher service requires two certificate files named ``private.jks`` and ``trusted.jks``.
+Due to the high sensitivity of these files, they need to be copied into the appropriate data volume
+manually using the following command:
+
 ```
 docker run \ 
 	--rm \
