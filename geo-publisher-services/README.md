@@ -22,6 +22,25 @@ docker run \
 		'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
 ```
 
+Copy certificates for apache:
+
+```
+docker run \
+	--rm \
+	--volumes-from geo-publisher-dv-proxy-ssl-certs \
+	-v /path/to/certificates:/opt/ssl/certs \
+	geo-publisher-proxy:$VERSION \
+	sh -c \
+		'cp /opt/ssl/certs/cert.pem /etc/ssl/certs/'
+docker run \
+	--rm \
+	--volumes-from geo-publisher-dv-proxy-ssl-private \
+	-v /path/to/certificates:/opt/ssl/certs \
+	geo-publisher-proxy:$VERSION \
+	sh -c \
+		'cp /opt/ssl/certs/private.key /etc/ssl/private/'
+```
+
 ## Setting up the database
 
 The database requires two data-only volumes for data and logs, these are created first:

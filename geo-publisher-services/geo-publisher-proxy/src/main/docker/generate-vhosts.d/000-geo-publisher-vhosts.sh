@@ -13,8 +13,9 @@ function writeVhostStart {
 			ServerName $1
 			
 			SSLEngine On
-			SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-			SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+			SSLCertificateFile /etc/ssl/certs/cert.pem
+			SSLCertificateKeyFile /etc/ssl/private/private.key
+			SSLCACertificateFile /opt/certs/cabundle.pem
 			
 			DocumentRoot /var/www/geo-publisher
 			
