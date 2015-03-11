@@ -8,14 +8,14 @@
 	<name>Geo Publisher deployment</name>
 	
 	<properties>
-		<geo-publisher.version>0.0.1-SNAPSHOT</geo-publisher.version>
+		<geo-publisher.version>${project.version}</geo-publisher.version>
 		<geoserver.version>2.6.1</geoserver.version>
 	</properties>
 	
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1.0</version>
 	</parent>
 	
 	<scm>
@@ -110,7 +110,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.1</version>
 				
 				<configuration>
 					<goals>install</goals>
