@@ -8,7 +8,7 @@
     
     <properties>
         <aspectj.version>1.8.0</aspectj.version>
-        <geo-publisher.version>0.1.1-SNAPSHOT</geo-publisher.version>        
+        <geo-publisher.version>0.1.0</geo-publisher.version>        
     </properties>
     
     <repositories>
@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
+            <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
         </dependency>
     </dependencies>
@@ -74,6 +74,7 @@
                         </goals>
                         <phase>generate-resources</phase>                        
                         <configuration>
+                            <stripVersion>true</stripVersion>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>nl.idgis.publisher</groupId>
@@ -81,7 +82,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.aspectj</groupId>
-                                    <artifactId>aspectjrt</artifactId>                                    
+                                    <artifactId>aspectjweaver</artifactId>                                    
                                 </artifactItem>
                             </artifactItems>                            
                             <outputDirectory>${project.build.directory}/content/</outputDirectory>
