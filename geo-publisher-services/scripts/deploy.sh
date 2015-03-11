@@ -117,7 +117,7 @@ echo "Setting up Geoserver"
 echo "--------------------"
 create_data_container geo-publisher-dv-geoserver-data "docker run --name geo-publisher-dv-geoserver-data -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
 
-create_container geo-publisher-geoserver "docker run --name geo-publisher-geoserver -h geoserver -d --volumes-from geo-publisher-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
+create_container geo-publisher-geoserver "docker run --name geo-publisher-geoserver -h geoserver -d --link geo-publisher-db:db --volumes-from geo-publisher-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
 
 echo ""
 echo "----------------------------"
