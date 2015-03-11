@@ -5,7 +5,9 @@ RUN apt-get update && \
 	apt-get -qy upgrade && \
 	apt-get -qy install \
 		openjdk-8-jre-headless \
-		tomcat7
+		tomcat7 \
+		fontconfig \
+		fonts-liberation
 
 # Environment variables:
 ENV PUBLISHER_GEOSERVER_USER="admin"
