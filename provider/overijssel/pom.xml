@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>nl.idgis.publisher.deployment</groupId>
+    <artifactId>geo-publisher-provider</artifactId>
+    <version>0.1.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Geo Publisher Provider deployment</name>
+    
+    <properties>
+        <aspectj.version>1.8.0</aspectj.version>
+        <geo-publisher.version>0.1.1-SNAPSHOT</geo-publisher.version>        
+    </properties>
+    
+    <repositories>
+        <repository>
+            <id>idgis-public</id>
+            <url>http://nexus.idgis.eu/content/groups/public/</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>idgis-thirdparty</id>
+            <url>http://nexus.idgis.eu/content/repositories/thirdparty/</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>nl.idgis.publisher</groupId>
+            <artifactId>publisher-provider-app</artifactId>
+            <version>${geo-publisher.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <executions>                
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>generate-resources</phase>                        
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>nl.idgis.publisher</groupId>
+                                    <artifactId>publisher-provider-app</artifactId>                                    
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.aspectj</groupId>
+                                    <artifactId>aspectjrt</artifactId>                                    
+                                </artifactItem>
+                            </artifactItems>                            
+                            <outputDirectory>${project.build.directory}/content/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>
