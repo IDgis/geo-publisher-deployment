@@ -90,6 +90,22 @@ docker run \
 		'cp /opt/ssl/certs/private.key /etc/ssl/private/'
 ```
 
+## (Optional) install additional Geoserver fonts
+
+Assuming you have a directory on the host containing font files, the following command copies them into the Geoserver styles directory:
+
+```
+docker run \
+	--rm \
+	--volumes-from geo-publisher-dv-geoserver-data \
+	-v /path/to/fonts:/opt/fonts \
+	geo-publisher-geoserver:$VERSION \
+	sh -c \
+		'cp /opt/fonts/* /var/lib/geo-publisher/geoserver/styles/'
+```
+
+After copying new font files, the geoserver container should be restarted
+
 ## Quick installation in a Vagrant VM
 
 Geo publisher can easily be deployed in a VM created using Vagrant using the
