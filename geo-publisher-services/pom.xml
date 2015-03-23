@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.idgis.publisher.deployment</groupId>
 	<artifactId>geo-publisher-services</artifactId>
-	<version>0.3.1-SNAPSHOT</version>
+	<version>0.4.0</version>
 	<packaging>pom</packaging>
 	<name>Geo Publisher deployment</name>
 	
@@ -21,7 +21,7 @@
 		<connection>scm:git:git@github.com:IDgis/geo-publisher-deployment.git</connection>
 		<developerConnection>scm:git:git@github.com:IDgis/geo-publisher-deployment.git</developerConnection>
 		<url>https://github.com/IDgis/geo-publisher-deployment</url>
-		<tag>HEAD</tag>
+		<tag>geo-publisher-services-0.4.0</tag>
 	</scm>
 		
 	<repositories>
