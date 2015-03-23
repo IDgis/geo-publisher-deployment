@@ -7,7 +7,7 @@
 	<name>Geo Publisher deployment</name>
 	
 	<properties>
-		<geo-publisher.version>0.3.0</geo-publisher.version>
+		<geo-publisher.version>0.4.0</geo-publisher.version>
 		<geoserver.version>2.6.1</geoserver.version>
 	</properties>
 	
