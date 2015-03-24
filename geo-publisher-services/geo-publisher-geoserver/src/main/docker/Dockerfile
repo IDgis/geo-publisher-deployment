@@ -7,7 +7,9 @@ RUN apt-get update && \
 		openjdk-8-jre-headless \
 		tomcat7 \
 		fontconfig \
-		fonts-liberation
+		fonts-liberation \
+		cabextract \
+		wget
 
 # Environment variables:
 ENV PUBLISHER_GEOSERVER_USER="admin"
@@ -32,6 +34,26 @@ RUN chmod +x /opt/start.sh && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR && \ 
 	mkdir -p $GEOSERVER_DATA_DIR && \
 	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR
+	
+# Download and install the core fonts:
+ENV MSCOREFONTS_BASE="http://softlayer-ams.dl.sourceforge.net/project/corefonts/the%20fonts/final/"
+RUN wget -q -O /tmp/andale32.exe "${MSCOREFONTS_BASE}andale32.exe" && \
+	wget -q -O /tmp/arial32.exe "${MSCOREFONTS_BASE}arial32.exe" && \
+	wget -q -O /tmp/arialb32.exe "${MSCOREFONTS_BASE}arialb32.exe" && \
+	wget -q -O /tmp/comic32.exe "${MSCOREFONTS_BASE}comic32.exe" && \
+	wget -q -O /tmp/courie32.exe "${MSCOREFONTS_BASE}courie32.exe" && \
+	wget -q -O /tmp/georgi32.exe "${MSCOREFONTS_BASE}georgi32.exe" && \
+	wget -q -O /tmp/impact32.exe "${MSCOREFONTS_BASE}impact32.exe" && \
+	wget -q -O /tmp/times32.exe "${MSCOREFONTS_BASE}times32.exe" && \
+	wget -q -O /tmp/trebuc32.exe "${MSCOREFONTS_BASE}trebuc32.exe" && \
+	wget -q -O /tmp/webdin32.exe "${MSCOREFONTS_BASE}webdin32.exe" && \
+	wget -q -O /tmp/verdan32.exe "${MSCOREFONTS_BASE}verdan32.exe" && \
+	mkdir /tmp/mscorefonts && \
+	cabextract -L -d /tmp/mscorefonts /tmp/*.exe && \
+	mkdir /usr/share/fonts/truetype/mscorefonts && \
+	cp /tmp/mscorefonts/*.ttf /usr/share/fonts/truetype/mscorefonts && \
+	fc-cache -fv && \
+	fc-list
 	
 # Run the command as the geoserver user:
 USER tomcat7
