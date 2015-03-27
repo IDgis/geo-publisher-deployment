@@ -75,7 +75,6 @@
 		<module>geo-publisher-web</module>
 		<module>geo-publisher-service</module>
 		<module>geo-publisher-geoserver</module>
-		<module>geo-publisher-proxy</module>
 	</modules>
 	
 	<dependencyManagement>
