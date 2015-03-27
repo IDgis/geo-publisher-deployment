@@ -18,4 +18,6 @@ echo "Starting publisher web for IP $IP_ADDR ..."
 	-Dpublisher.admin.username=$PUBLISHER_WEB_ADMIN_USERNAME \
 	-Dpublisher.admin.password=$PUBLISHER_WEB_ADMIN_PASSWORD \
 	-Dpublisher.admin.dashboard.errorCount=$PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT \
-	-Dpublisher.admin.dashboard.notificationCount=$PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT $PUBLISHER_WEB_JAVA_OPTS
+	-Dpublisher.admin.dashboard.notificationCount=$PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT $PUBLISHER_WEB_JAVA_OPTS \
+	-DzooKeeper.hosts=zookeeper:2181 \
+	-Dapplication.domain=$PUBLISHER_WEB_DOMAIN

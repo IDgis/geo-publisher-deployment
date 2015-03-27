@@ -1,6 +1,7 @@
 FROM ubuntu:utopic
 
 # Setup environment:
+ENV PUBLISHER_WEB_DOMAIN="localhost"
 ENV PUBLISHER_WEB_SECRET="9x`_ocB`=p:vPZciT;rDZNcwbb?BZ4ahX?SbT1fmrmdk:kS9GuV]UStrH2W@im6O"
 ENV PUBLISHER_WEB_ADMIN_USERNAME admin@idgis.nl
 ENV PUBLISHER_WEB_ADMIN_PASSWORD admin
