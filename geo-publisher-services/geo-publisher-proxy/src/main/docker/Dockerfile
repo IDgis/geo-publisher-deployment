@@ -1,4 +1,4 @@
-FROM docker-apache:0.1.0
+FROM docker-apache:0.1.1-SNAPSHOT
 
 # Configuration environment parameters:
 ENV PUBLISHER_GEOSERVER_DOMAIN="overijssel.geo-hosting.nl"
