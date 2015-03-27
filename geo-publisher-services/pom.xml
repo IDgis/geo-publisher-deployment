@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
-		<version>0.1.0</version>
+		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 	
 	<scm>
@@ -80,6 +80,13 @@
 	
 	<dependencyManagement>
 		<dependencies>
+			<!-- Sysadmin dependencies: -->
+			<dependency>
+				<groupId>nl.idgis.sys</groupId>
+				<artifactId>provisioning-registration-war</artifactId>
+				<version>0.1.1-SNAPSHOT</version>
+			</dependency>
+			
 			<!-- Geo publisher dependencies: -->
 			<dependency>
 				<groupId>nl.idgis.publisher</groupId>
