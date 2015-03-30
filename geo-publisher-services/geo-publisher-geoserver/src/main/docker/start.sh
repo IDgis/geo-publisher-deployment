@@ -17,7 +17,10 @@ JAVA_OPTS="$JAVA_OPTS -Dservice.httpPort=$SERVICE_HTTP_PORT"
 if [ "$SERVICE_IP" != "" ]; then
 	JAVA_OPTS="$JAVA_OPTS -Dservice.ip=$SERVICE_IP"
 fi
-JAVA_OPTS="$JAVA_OPTS -Dservice.path=$SERVICE_PATH"
+JAVA_OPTS="$JAVA_OPTS -Dservice.path=/$PUBLISHER_GEOSERVER_NAME"
 JAVA_OPTS="$JAVA_OPTS -Dservice.forceHttps=$SERVICE_FORCE_HTTPS"
+
+# Copy the WAR to the correct name:
+cp /var/lib/tomcat7/webapps/geoserver.war-base /var/lib/tomcat7/webapps/$PUBLISHER_GEOSERVER_NAME.war
 
 exec /usr/share/tomcat7/bin/catalina.sh run

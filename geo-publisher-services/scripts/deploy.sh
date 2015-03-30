@@ -36,6 +36,7 @@ PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT="5"
 PUBLISHER_GEOSERVER_USERNAME="admin"
 PUBLISHER_GEOSERVER_PASSWORD="admin"
 PUBLISHER_GEOSERVER_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_GENERATE_NAME="false"
 PUBLISHER_WEB_DOMAIN="localhost"
 
 # Settings file:
@@ -145,12 +146,45 @@ create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-
 create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
 
 echo ""
-echo "--------------------"
-echo "Setting up Geoserver"
-echo "--------------------"
-create_data_container gp-$INSTANCE-dv-geoserver-data "docker run --name gp-$INSTANCE-dv-geoserver-data -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+echo "------------------------------"
+echo "Setting up Geoserver instances"
+echo "------------------------------"
+#
+# Creates a set of geoserver containers:
+#  create_geoserver [type] [id] [domain]
+#
+function create_geoserver () {
+	GS_TYPE=$1
+	GS_ID=$2
+	GS_DOMAIN=$3
+	GS_DATA_CONTAINER_NAME="gp-$INSTANCE-dv-geoserver-$GS_TYPE-$GS_ID"
+	GS_CONTAINER_NAME="gp-$INSTANCE-geoserver-$GS_TYPE-$GS_ID"
+	GS_HOST="geoserver-$GS_TYPE-$GS_ID"
+	GS_ENV="-e SERVICE_IDENTIFICATION=geoserver-$GS_TYPE -e SERVICE_FORCE_HTTPS=false -e PUBLISHER_GEOSERVER_DOMAIN=$GS_DOMAIN"
+	
+	if [ "$PUBLISHER_GEOSERVER_GENERATE_NAME" == "true" ]; then
+		GS_ENV="-e PUBLISHER_GEOSERVER_NAME=geoserver-$GS_TYPE"
+	fi
 
-create_container gp-$INSTANCE-geoserver "docker run --name gp-$INSTANCE-geoserver -h geoserver -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
+	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
+}
+ 
+# Stop and remove old geoserver containers:
+for i in $(docker ps | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-geoserver-"); do
+	echo "Stopping geoserver $i ..."
+	docker stop $i > /dev/null
+done
+for i in $(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-geoserver-"); do
+	echo "Removing geoserver $i ..."
+	docker rm $i > /dev/null
+done
+
+# Create geoserver instances:
+create_geoserver staging 1 $PUBLISHER_GEOSERVER_DOMAIN
+create_geoserver secure 1 $PUBLISHER_GEOSERVER_DOMAIN
+create_geoserver public 1 $PUBLISHER_GEOSERVER_DOMAIN
+create_geoserver guaranteed 1 $PUBLISHER_GEOSERVER_DOMAIN
 
 echo ""
 echo "----------------------------"

@@ -15,6 +15,7 @@ RUN apt-get update && \
 ENV PUBLISHER_GEOSERVER_DOMAIN="localhost"
 ENV PUBLISHER_GEOSERVER_USER="admin"
 ENV PUBLISHER_GEOSERVER_PASSWORD="admin"
+ENV PUBLISHER_GEOSERVER_NAME="geoserver"
 ENV PUBLISHER_GEOSERVER_JAVA_OPTS=""
 
 ENV ZOOKEEPER_HOSTS="zookeeper:2181"
@@ -24,7 +25,6 @@ ENV SERVICE_IDENTIFICATION="geoserver"
 ENV SERVICE_AJP_PORT="8009"
 ENV SERVICE_HTTP_PORT="8080"
 ENV SERVICE_IP=""
-ENV SERVICE_PATH="/geoserver"
 ENV SERVICE_FORCE_HTTPS="true"		
 
 ENV GEOSERVER_DATA_DIR="/var/lib/geo-publisher/geoserver"
@@ -44,7 +44,8 @@ RUN chmod +x /opt/start.sh && \
 	mkdir -p $CATALINA_TMPDIR && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR && \ 
 	mkdir -p $GEOSERVER_DATA_DIR && \
-	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR
+	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR && \
+	mv /var/lib/tomcat7/webapps/geoserver.war /var/lib/tomcat7/webapps/geoserver.war-base
 	
 # Download and install the core fonts:
 ENV MSCOREFONTS_BASE="http://softlayer-ams.dl.sourceforge.net/project/corefonts/the%20fonts/final/"
