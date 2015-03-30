@@ -163,7 +163,7 @@ function create_geoserver () {
 	GS_ENV="-e SERVICE_IDENTIFICATION=geoserver-$GS_TYPE -e SERVICE_FORCE_HTTPS=false -e PUBLISHER_GEOSERVER_DOMAIN=$GS_DOMAIN"
 	
 	if [ "$PUBLISHER_GEOSERVER_GENERATE_NAME" == "true" ]; then
-		GS_ENV="-e PUBLISHER_GEOSERVER_NAME=geoserver-$GS_TYPE"
+		GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_NAME=geoserver-$GS_TYPE"
 	fi
 
 	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
