@@ -6,7 +6,7 @@
 		<artifactId>geo-publisher-services</artifactId>
 		<version>0.6.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>geo-publisher-metadata</artifactId>
+	<artifactId>geo-publisher-dav</artifactId>
 	<packaging>pom</packaging>
 	
 	<build>
