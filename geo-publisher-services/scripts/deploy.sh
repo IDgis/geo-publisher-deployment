@@ -159,6 +159,12 @@ echo "----------------------------"
 create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
 create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata geo-publisher-service:$VERSION true"
  
+if [ -e "$CERTS_PATH/trusted.jks" ]; then
+	echo "Certificates found at $CERTS_PATH, copying to data volumes ..."
+	
+	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
+fi 
+
 create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
