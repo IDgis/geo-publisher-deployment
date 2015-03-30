@@ -10,7 +10,7 @@ IP_ADDR_SERVICE=$(grep service /etc/hosts | head -n 1 | awk 'BEGIN {FS=" "}; {pr
 echo "Starting publisher web for IP $IP_ADDR ..."
 
 # Start publisher-web with the provided arguments:
-/opt/geo-publisher/bin/publisher-web \
+exec /opt/geo-publisher/bin/publisher-web \
 	-Dapplication.secret=$PUBLISHER_WEB_SECRET \
 	-Dakka.remote.netty.tcp.hostname=$IP_ADDR \
 	-Dakka.remote.netty.tcp.port=2552 \

@@ -20,4 +20,4 @@ fi
 JAVA_OPTS="$JAVA_OPTS -Dservice.path=$SERVICE_PATH"
 JAVA_OPTS="$JAVA_OPTS -Dservice.forceHttps=$SERVICE_FORCE_HTTPS"
 
-/usr/share/tomcat7/bin/catalina.sh run
+exec /usr/share/tomcat7/bin/catalina.sh run
