@@ -7,14 +7,14 @@
 	<name>Geo Publisher deployment</name>
 	
 	<properties>
-		<geo-publisher.version>0.6.0</geo-publisher.version>
+		<geo-publisher.version>0.6.1-SNAPSHOT</geo-publisher.version>
 		<geoserver.version>2.6.1</geoserver.version>
 	</properties>
 	
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
-		<version>0.1.0</version>
+		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 	
 	<scm>
@@ -75,11 +75,19 @@
 		<module>geo-publisher-web</module>
 		<module>geo-publisher-service</module>
 		<module>geo-publisher-geoserver</module>
-		<module>geo-publisher-proxy</module>
+		<module>geo-publisher-dav</module>
 	</modules>
 	
 	<dependencyManagement>
 		<dependencies>
+			<!-- Sysadmin dependencies: -->
+			<dependency>
+				<groupId>nl.idgis.sys</groupId>
+				<artifactId>provisioning-registration-war</artifactId>
+				<version>0.1.1-SNAPSHOT</version>
+				<type>war</type>
+			</dependency>
+			
 			<!-- Geo publisher dependencies: -->
 			<dependency>
 				<groupId>nl.idgis.publisher</groupId>

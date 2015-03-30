@@ -1,48 +1,30 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>nl.idgis.publisher.deployment</groupId>
 		<artifactId>geo-publisher-services</artifactId>
 		<version>0.6.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>geo-publisher-geoserver</artifactId>
+	<artifactId>geo-publisher-dav</artifactId>
 	<packaging>pom</packaging>
-	<name>Geo Publisher deployment - Geoserver</name>
-
-	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>boundless</id>
-			<name>Boundless Maven Repository</name>
-			<url>http://repo.boundlessgeo.com/main</url>
-		</repository>	
-	</repositories>
 	
 	<build>
 		<plugins>
-			<!-- Copy the Geoserver dependency: -->
+			<!-- Copy the WAR registration dependency: -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				
 				<executions>
 					<execution>
-						<id>copy-geoserver-war</id>
+						<id>copy-registration-war</id>
 						
 						<goals><goal>copy</goal></goals>
 						<phase>package</phase>
 						
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.geoserver.web</groupId>
-									<artifactId>gs-web-app</artifactId>
-									<version>${geoserver.version}</version>
-									<type>war</type>
-									<destFileName>geoserver.war</destFileName>
-								</artifactItem>
 								<artifactItem>
 									<groupId>nl.idgis.sys</groupId>
 									<artifactId>provisioning-registration-war</artifactId>
@@ -84,21 +66,8 @@
 				</executions>
 				
 			</plugin>
+			
 		</plugins>
 	</build>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.geoserver.web</groupId>
-			<artifactId>gs-web-app</artifactId>
-			<version>${geoserver.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>nl.idgis.sys</groupId>
-			<artifactId>provisioning-registration-war</artifactId>
-			<type>war</type>
-		</dependency>
-	</dependencies>
-
 </project>

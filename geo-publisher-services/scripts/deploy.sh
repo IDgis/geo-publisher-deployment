@@ -3,13 +3,16 @@
 set -e
 
 # Test parameters:
-if [[ $# < 2 ]]; then
-	echo "Usage: $0 [deploy version] [settings file]"
+if [[ $# < 3 ]]; then
+	echo "Usage: $0 [sysadmin version] [geopublisher version] [settings file]"
 	exit 1
 fi
 
 # Configuration:
-VERSION=$1
+SYSADMIN_VERSION=$1
+VERSION=$2
+SETTINGS_FILE=$3
+INSTANCE=${SETTINGS_FILE%%.*}
 PG_USER="publisher"
 PG_PASSWORD="publisher"
 PUBLISHER_DATA_SOURCE_ID="my-data-source"
@@ -36,8 +39,8 @@ PUBLISHER_GEOSERVER_DOMAIN="localhost"
 PUBLISHER_WEB_DOMAIN="localhost"
 
 # Settings file:
-echo "Reading settings from $2 ..."
-source $2
+echo "Reading settings from $3 ..."
+source $3
  
 DOCKER_ENV="-e PG_USER=\"$PG_USER\" -e PG_PASSWORD=\"$PG_PASSWORD\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_DATA_SOURCE_ID=\"$PUBLISHER_DATA_SOURCE_ID\""
@@ -62,7 +65,7 @@ DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT=\"$P
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_GEOSERVER_DOMAIN=\"$PUBLISHER_GEOSERVER_DOMAIN\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_DOMAIN=\"$PUBLISHER_WEB_DOMAIN\""
 
-echo "Deploying Geo Publisher $VERSION ..."
+echo "Deploying Geo Publisher $INSTANCE $VERSION with sysadmin version $SYSADMIN_VERSION ..."
 
 function create_data_container () {
 	CONTAINER_NAME=$1
@@ -104,42 +107,63 @@ function create_container () {
 
 echo ""
 echo "-------------------"
+echo "Creating base system"
+echo "-------------------"
+create_data_container zookeeper-log "docker run --name zookeeper-log -d -v /var/log/zookeeper docker-zookeeper:$SYSADMIN_VERSION true"
+create_data_container zookeeper-data "docker run --name zookeeper-data -d -v /var/lib/zookeeper docker-zookeeper:$SYSADMIN_VERSION true"
+
+create_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
+
+create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /etc/ssl/certs docker-apache:$SYSADMIN_VERSION true"
+create_data_container proxy-ssl-private "docker run --name proxy-ssl-private -d -v /etc/ssl/private docker-apache:$SYSADMIN_VERSION true"
+create_data_container proxy-logs "docker run --name proxy-logs -d -v /var/log/apache2 docker-apache:$SYSADMIN_VERSION true"
+
+create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 docker-apache:$SYSADMIN_VERSION"
+
+echo ""
+echo "-------------------"
 echo "Setting up database"
 echo "-------------------"
-create_data_container geo-publisher-dv-db-data "docker run --name geo-publisher-dv-db-data -d -v /var/lib/postgresql geo-publisher-postgis:$VERSION true"
-create_data_container geo-publisher-dv-db-log "docker run --name geo-publisher-dv-db-log -d -v /var/log/postgresql geo-publisher-postgis:$VERSION true"
+create_data_container gp-$INSTANCE-dv-db-data "docker run --name gp-$INSTANCE-dv-db-data -d -v /var/lib/postgresql geo-publisher-postgis:$VERSION true"
+create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-db-log -d -v /var/log/postgresql geo-publisher-postgis:$VERSION true"
 
-create_container geo-publisher-db "docker run --name geo-publisher-db -h db -d --volumes-from geo-publisher-dv-db-data --volumes-from geo-publisher-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
+create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
 
 echo ""
 echo "--------------------"
 echo "Setting up Geoserver"
 echo "--------------------"
-create_data_container geo-publisher-dv-geoserver-data "docker run --name geo-publisher-dv-geoserver-data -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+create_data_container gp-$INSTANCE-dv-geoserver-data "docker run --name gp-$INSTANCE-dv-geoserver-data -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
 
-create_container geo-publisher-geoserver "docker run --name geo-publisher-geoserver -h geoserver -d --link geo-publisher-db:db --volumes-from geo-publisher-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
+create_container gp-$INSTANCE-geoserver "docker run --name gp-$INSTANCE-geoserver -h geoserver -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
 
 echo ""
 echo "----------------------------"
 echo "Setting up publisher service"
 echo "----------------------------"
-create_data_container geo-publisher-dv-service-sslconf "docker run --name geo-publisher-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
-create_data_container geo-publisher-dv-service-metadata "docker run --name geo-publisher-dv-service-metadata -d -v /var/www/geo-publisher/metadata geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata geo-publisher-service:$VERSION true"
  
-create_container geo-publisher-service "docker run --name geo-publisher-service -p 4242:4242 -h service -d --volumes-from geo-publisher-dv-service-sslconf --volumes-from geo-publisher-dv-service-metadata --link geo-publisher-db:db --link geo-publisher-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"
 echo "Setting up publisher web"
 echo "------------------------"
-create_container geo-publisher-web "docker run --name geo-publisher-web -h web -d --link geo-publisher-service:service --restart=always $DOCKER_ENV geo-publisher-web:$VERSION"
+create_container gp-$INSTANCE-web "docker run --name gp-$INSTANCE-web -h web -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-service:service --restart=always $DOCKER_ENV geo-publisher-web:$VERSION"
 
 echo ""
-echo "--------------------------"
-echo "Setting up publisher proxy"
-echo "--------------------------"
-create_data_container geo-publisher-dv-proxy-ssl-certs "docker run --name geo-publisher-dv-proxy-ssl-certs -d -v /etc/ssl/certs geo-publisher-proxy:$VERSION true"
-create_data_container geo-publisher-dv-proxy-ssl-private "docker run --name geo-publisher-dv-proxy-ssl-private -d -v /etc/ssl/private geo-publisher-proxy:$VERSION true"
-create_data_container geo-publisher-dv-proxy-logs "docker run --name geo-publisher-dv-proxy-logs -d -v /var/log/apache2 geo-publisher-proxy:$VERSION true"
+echo "------------------------"
+echo "Setting up publisher DAV"
+echo "------------------------"
+create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always $DOCKER_ENV geo-publisher-dav:$VERSION"
 
-create_container geo-publisher-proxy "docker run --name geo-publisher-proxy -h proxy -d --link geo-publisher-web:web --link geo-publisher-geoserver:geoserver --volumes-from geo-publisher-dv-proxy-ssl-certs --volumes-from geo-publisher-dv-proxy-ssl-private --volumes-from geo-publisher-dv-proxy-logs --volumes-from geo-publisher-dv-service-metadata --restart=always -p 80:80 -p 443:443 $DOCKER_ENV geo-publisher-proxy:$VERSION"
+# echo ""
+# echo "--------------------------"
+# echo "Setting up publisher proxy"
+# echo "--------------------------"
+# create_data_container gp-$INSTANCE-dv-proxy-ssl-certs "docker run --name gp-$INSTANCE-dv-proxy-ssl-certs -d -v /etc/ssl/certs geo-publisher-proxy:$VERSION true"
+# create_data_container gp-$INSTANCE-dv-proxy-ssl-private "docker run --name gp-$INSTANCE-dv-proxy-ssl-private -d -v /etc/ssl/private geo-publisher-proxy:$VERSION true"
+# create_data_container gp-$INSTANCE-dv-proxy-logs "docker run --name gp-$INSTANCE-dv-proxy-logs -d -v /var/log/apache2 geo-publisher-proxy:$VERSION true"
+
+# create_container gp-$INSTANCE-proxy "docker run --name gp-$INSTANCE-proxy -h proxy -d --link gp-$INSTANCE-web:web --link gp-$INSTANCE-geoserver:geoserver --volumes-from gp-$INSTANCE-dv-proxy-ssl-certs --volumes-from gp-$INSTANCE-dv-proxy-ssl-private --volumes-from gp-$INSTANCE-dv-proxy-logs --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always -p 80:80 -p 443:443 $DOCKER_ENV geo-publisher-proxy:$VERSION"
