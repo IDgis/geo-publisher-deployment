@@ -8,17 +8,17 @@ RUN apt-get update && \
 		tomcat7
 
 # Container configuration:
-ENV PUBLISHER_METADATA_DOMAIN="localhost"
-ENV PUBLISHER_METADATA_JAVA_OPTS=""
+ENV PUBLISHER_DAV_DOMAIN="localhost"
+ENV PUBLISHER_DAV_JAVA_OPTS=""
 
 ENV ZOOKEEPER_HOSTS="zookeeper:2181"
 ENV ZOOKEEPER_NAMESPACE=""
 
-ENV SERVICE_IDENTIFICATION="metadata"
+ENV SERVICE_IDENTIFICATION="dav"
 ENV SERVICE_AJP_PORT="8009"
 ENV SERVICE_HTTP_PORT="8080"
 ENV SERVICE_IP=""
-ENV SERVICE_PATH="/metadata"
+ENV SERVICE_PATH="/dav"
 ENV SERVICE_FORCE_HTTPS="false"		
 
 # Setup environment for tomcat:
@@ -39,12 +39,11 @@ RUN chmod +x /opt/start.sh && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR 
 
 # Create context and webapp:
-COPY /metadata.xml /var/lib/tomcat7/conf/Catalina/localhost/
-COPY /web.xml /usr/share/geo-publisher/metadata/WEB-INF/
-RUN chown root:tomcat7 /var/lib/tomcat7/conf/Catalina/localhost/metadata.xml && \
-	chown tomcat7:tomcat7 /usr/share/geo-publisher/metadata && \
-	chown tomcat7:tomcat7 /usr/share/geo-publisher/metadata/WEB-INF && \
-	chown tomcat7:tomcat7 /usr/share/geo-publisher/metadata/WEB-INF/web.xml
+COPY /dav.xml /var/lib/tomcat7/conf/Catalina/localhost/
+COPY /web.xml /var/lib/geo-publisher/dav/WEB-INF/
+RUN chown root:tomcat7 /var/lib/tomcat7/conf/Catalina/localhost/dav.xml && \
+	chown tomcat7:tomcat7 /var/lib/geo-publisher/dav/WEB-INF && \
+	chown tomcat7:tomcat7 /var/lib/geo-publisher/dav/WEB-INF/web.xml
 
 # Run the command as the geoserver user:
 USER tomcat7

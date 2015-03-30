@@ -142,7 +142,7 @@ echo "----------------------------"
 echo "Setting up publisher service"
 echo "----------------------------"
 create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
-create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/www/geo-publisher/metadata geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata geo-publisher-service:$VERSION true"
  
 create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
@@ -151,6 +151,12 @@ echo "------------------------"
 echo "Setting up publisher web"
 echo "------------------------"
 create_container gp-$INSTANCE-web "docker run --name gp-$INSTANCE-web -h web -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-service:service --restart=always $DOCKER_ENV geo-publisher-web:$VERSION"
+
+echo ""
+echo "-----------------------------"
+echo "Setting up publisher metadata"
+echo "-----------------------------"
+create_container gp-$INSTANCE-metadata "docker run --name gp-$INSTANCE-metadata -h metadata -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always $DOCKER_ENV geo-publisher-metadata:$VERSION"
 
 # echo ""
 # echo "--------------------------"

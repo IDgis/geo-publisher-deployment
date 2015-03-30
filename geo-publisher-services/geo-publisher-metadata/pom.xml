@@ -70,12 +70,4 @@
 		</plugins>
 	</build>
 	
-	<dependencies>
-		<dependency>
-			<groupId>nl.idgis.sys</groupId>
-			<artifactId>provisioning-registration-war</artifactId>
-			<type>war</type>
-		</dependency>
-	</dependencies>
-	
 </project>
