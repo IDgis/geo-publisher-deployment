@@ -114,11 +114,26 @@ create_data_container zookeeper-data "docker run --name zookeeper-data -d -v /va
 
 create_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
 
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+CERTS_PATH="$SCRIPTPATH/certs"
+
 create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /etc/ssl/certs docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-ssl-private "docker run --name proxy-ssl-private -d -v /etc/ssl/private docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-logs "docker run --name proxy-logs -d -v /var/log/apache2 docker-apache:$SYSADMIN_VERSION true"
 
-create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 docker-apache:$SYSADMIN_VERSION"
+if [ -e "$CERTS_PATH/cert.pem" ]; then
+	echo "Found certificates in $CERTS_PATH, copying into data volumes ..."
+	
+	PROXY_SETTINGS="-e APACHE_SSL_CERTIFICATE_FILE=/etc/ssl/certs/cert.pem"
+	PROXY_SETTINGS="$PROXY_SETTINGS -e APACHE_SSL_CERTIFICATE_KEY_FILE=/etc/ssl/private/private.key"
+	PROXY_SETTINGS="$PROXY_SETTINGS -e APACHE_SSL_CERTIFICATE_CHAIN_FILE=/etc/ssl/certs/cabundle.pem"
+	
+	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cert.pem /etc/ssl/certs/'
+	docker run --rm --volumes-from proxy-ssl-private -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/private.key /etc/ssl/private/'
+	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cabundle.pem /etc/ssl/certs/'
+fi
+
+create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
 
 echo ""
 echo "-------------------"
@@ -144,6 +159,12 @@ echo "----------------------------"
 create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
 create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata geo-publisher-service:$VERSION true"
  
+if [ -e "$CERTS_PATH/trusted.jks" ]; then
+	echo "Certificates found at $CERTS_PATH, copying to data volumes ..."
+	
+	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
+fi 
+
 create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
@@ -157,13 +178,3 @@ echo "------------------------"
 echo "Setting up publisher DAV"
 echo "------------------------"
 create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always $DOCKER_ENV geo-publisher-dav:$VERSION"
-
-# echo ""
-# echo "--------------------------"
-# echo "Setting up publisher proxy"
-# echo "--------------------------"
-# create_data_container gp-$INSTANCE-dv-proxy-ssl-certs "docker run --name gp-$INSTANCE-dv-proxy-ssl-certs -d -v /etc/ssl/certs geo-publisher-proxy:$VERSION true"
-# create_data_container gp-$INSTANCE-dv-proxy-ssl-private "docker run --name gp-$INSTANCE-dv-proxy-ssl-private -d -v /etc/ssl/private geo-publisher-proxy:$VERSION true"
-# create_data_container gp-$INSTANCE-dv-proxy-logs "docker run --name gp-$INSTANCE-dv-proxy-logs -d -v /var/log/apache2 geo-publisher-proxy:$VERSION true"
-
-# create_container gp-$INSTANCE-proxy "docker run --name gp-$INSTANCE-proxy -h proxy -d --link gp-$INSTANCE-web:web --link gp-$INSTANCE-geoserver:geoserver --volumes-from gp-$INSTANCE-dv-proxy-ssl-certs --volumes-from gp-$INSTANCE-dv-proxy-ssl-private --volumes-from gp-$INSTANCE-dv-proxy-logs --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always -p 80:80 -p 443:443 $DOCKER_ENV geo-publisher-proxy:$VERSION"
