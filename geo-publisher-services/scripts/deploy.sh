@@ -39,6 +39,9 @@ PUBLISHER_GEOSERVER_STAGING_DOMAIN="localhost"
 PUBLISHER_GEOSERVER_SECURE_DOMAIN="localhost"
 PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN="localhost"
 PUBLISHER_GEOSERVER_PUBLIC_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_SECURE_ALLOW_FROM="127.0.0.1"
+PUBLISHER_GEOSERVER_GUARANTEED_ALLOW_FROM="127.0.0.1"
+PUBLISHER_GEOSERVER_STAGING_ALLOW_FROM="127.0.0.1"
 PUBLISHER_GEOSERVER_GENERATE_NAME="false"
 PUBLISHER_WEB_DOMAIN="localhost"
 
@@ -158,16 +161,18 @@ echo "Setting up Geoserver instances"
 echo "------------------------------"
 #
 # Creates a set of geoserver containers:
-#  create_geoserver [type] [id] [domain]
+#  create_geoserver [type] [id] [domain] [allow_from]
 #
 function create_geoserver () {
 	GS_TYPE=$1
 	GS_ID=$2
 	GS_DOMAIN=$3
+	GS_ALLOW_FROM=$4
 	GS_DATA_CONTAINER_NAME="gp-$INSTANCE-dv-geoserver-$GS_TYPE-$GS_ID"
 	GS_CONTAINER_NAME="gp-$INSTANCE-geoserver-$GS_TYPE-$GS_ID"
 	GS_HOST="geoserver-$GS_TYPE-$GS_ID"
 	GS_ENV="-e SERVICE_IDENTIFICATION=geoserver-$GS_TYPE -e SERVICE_FORCE_HTTPS=false -e PUBLISHER_GEOSERVER_DOMAIN=$GS_DOMAIN"
+	GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_ALLOW_FROM=$GS_ALLOW_FROM"
 	
 	if [ "$PUBLISHER_GEOSERVER_GENERATE_NAME" == "true" ]; then
 		GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_NAME=geoserver-$GS_TYPE"
@@ -188,10 +193,10 @@ for i in $(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE
 done
 
 # Create geoserver instances:
-create_geoserver staging 1 $PUBLISHER_GEOSERVER_STAGING_DOMAIN
-create_geoserver secure 1 $PUBLISHER_GEOSERVER_SECURE_DOMAIN
-create_geoserver public 1 $PUBLISHER_GEOSERVER_PUBLIC_DOMAIN
-create_geoserver guaranteed 1 $PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN
+create_geoserver staging 1 $PUBLISHER_GEOSERVER_STAGING_DOMAIN $PUBLISHER_GEOSERVER_STAGING_ALLOW_FROM
+create_geoserver secure 1 $PUBLISHER_GEOSERVER_SECURE_DOMAIN $PUBLISHER_GEOSERVER_SECURE_ALLOW_FROM
+create_geoserver public 1 $PUBLISHER_GEOSERVER_PUBLIC_DOMAIN ""
+create_geoserver guaranteed 1 $PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN $PUBLISHER_GEOSERVER_GUARANTEED_ALLOW_FROM
 
 echo ""
 echo "----------------------------"
@@ -206,7 +211,7 @@ if [ -e "$CERTS_PATH/trusted.jks" ]; then
 	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
 fi 
 
-create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"
