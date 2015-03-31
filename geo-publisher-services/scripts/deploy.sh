@@ -35,7 +35,14 @@ PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT="5"
 PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT="5"
 PUBLISHER_GEOSERVER_USERNAME="admin"
 PUBLISHER_GEOSERVER_PASSWORD="admin"
-PUBLISHER_GEOSERVER_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_STAGING_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_SECURE_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_PUBLIC_DOMAIN="localhost"
+PUBLISHER_GEOSERVER_SECURE_ALLOW_FROM="127.0.0.1"
+PUBLISHER_GEOSERVER_GUARANTEED_ALLOW_FROM="127.0.0.1"
+PUBLISHER_GEOSERVER_STAGING_ALLOW_FROM="127.0.0.1"
+PUBLISHER_GEOSERVER_GENERATE_NAME="false"
 PUBLISHER_WEB_DOMAIN="localhost"
 
 # Settings file:
@@ -62,6 +69,10 @@ DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_ADMIN_USERNAME=\"$PUBLISHER_WEB_ADMIN_U
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_ADMIN_PASSWORD=\"$PUBLISHER_WEB_ADMIN_PASSWORD\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT=\"$PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT=\"$PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT\""
+DOCKER_ENV="$ODKCER_ENV -e PUBLISHER_GEOSERVER_STAGING_DOMAIN\"$PUBLISHER_GEOSERVER_STAGING_DOMAIN\""
+DOCKER_ENV="$ODKCER_ENV -e PUBLISHER_GEOSERVER_SECURE_DOMAIN\"$PUBLISHER_GEOSERVER_SECURE_DOMAIN\""
+DOCKER_ENV="$ODKCER_ENV -e PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN\"$PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN\""
+DOCKER_ENV="$ODKCER_ENV -e PUBLISHER_GEOSERVER_PUBLIC_DOMAIN\"$PUBLISHER_GEOSERVER_PUBLIC_DOMAIN\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_GEOSERVER_DOMAIN=\"$PUBLISHER_GEOSERVER_DOMAIN\""
 DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_WEB_DOMAIN=\"$PUBLISHER_WEB_DOMAIN\""
 
@@ -145,12 +156,47 @@ create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-
 create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
 
 echo ""
-echo "--------------------"
-echo "Setting up Geoserver"
-echo "--------------------"
-create_data_container gp-$INSTANCE-dv-geoserver-data "docker run --name gp-$INSTANCE-dv-geoserver-data -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+echo "------------------------------"
+echo "Setting up Geoserver instances"
+echo "------------------------------"
+#
+# Creates a set of geoserver containers:
+#  create_geoserver [type] [id] [domain] [allow_from]
+#
+function create_geoserver () {
+	GS_TYPE=$1
+	GS_ID=$2
+	GS_DOMAIN=$3
+	GS_ALLOW_FROM=$4
+	GS_DATA_CONTAINER_NAME="gp-$INSTANCE-dv-geoserver-$GS_TYPE-$GS_ID"
+	GS_CONTAINER_NAME="gp-$INSTANCE-geoserver-$GS_TYPE-$GS_ID"
+	GS_HOST="geoserver-$GS_TYPE-$GS_ID"
+	GS_ENV="-e SERVICE_IDENTIFICATION=geoserver-$GS_TYPE -e SERVICE_FORCE_HTTPS=false -e PUBLISHER_GEOSERVER_DOMAIN=$GS_DOMAIN"
+	GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_ALLOW_FROM=$GS_ALLOW_FROM"
+	
+	if [ "$PUBLISHER_GEOSERVER_GENERATE_NAME" == "true" ]; then
+		GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_NAME=geoserver-$GS_TYPE"
+	fi
 
-create_container gp-$INSTANCE-geoserver "docker run --name gp-$INSTANCE-geoserver -h geoserver -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-geoserver-data --restart=always $DOCKER_ENV geo-publisher-geoserver:$VERSION"
+	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
+}
+ 
+# Stop and remove old geoserver containers:
+for i in $(docker ps | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-geoserver-"); do
+	echo "Stopping geoserver $i ..."
+	docker stop $i > /dev/null
+done
+for i in $(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-geoserver-"); do
+	echo "Removing geoserver $i ..."
+	docker rm $i > /dev/null
+done
+
+# Create geoserver instances:
+create_geoserver staging 1 $PUBLISHER_GEOSERVER_STAGING_DOMAIN $PUBLISHER_GEOSERVER_STAGING_ALLOW_FROM
+create_geoserver secure 1 $PUBLISHER_GEOSERVER_SECURE_DOMAIN $PUBLISHER_GEOSERVER_SECURE_ALLOW_FROM
+create_geoserver public 1 $PUBLISHER_GEOSERVER_PUBLIC_DOMAIN ""
+create_geoserver guaranteed 1 $PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN $PUBLISHER_GEOSERVER_GUARANTEED_ALLOW_FROM
 
 echo ""
 echo "----------------------------"
@@ -165,7 +211,7 @@ if [ -e "$CERTS_PATH/trusted.jks" ]; then
 	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
 fi 
 
-create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --link gp-$INSTANCE-geoserver:geoserver --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"
