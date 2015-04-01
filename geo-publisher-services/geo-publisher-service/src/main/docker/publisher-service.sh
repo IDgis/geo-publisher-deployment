@@ -1,6 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 IP_ADDR=$(grep "$HOSTNAME" /etc/hosts | head -n 1 | awk 'BEGIN {FS=" "}; {print $1}')
+
+ZK_CONF="-Dpublisher.service.zooKeeper.hosts=$ZOOKEEPER_HOSTS"
+if [ "$ZOOKEEPER_NAMESPACE" != "" ]; then
+	ZK_CONF="$ZK_CONF -Dpublisher.service.zooKeeper.namespace=$ZOOKEEPER_NAMESPACE"
+fi
 
 echo "Starting publisher service for IP $IP_ADDR ..."
 exec java -Dpublisher.service.akka.remote.netty.tcp.hostname=$IP_ADDR \
@@ -26,4 +31,5 @@ exec java -Dpublisher.service.akka.remote.netty.tcp.hostname=$IP_ADDR \
 	-Dpublisher.service.metadata.generator-constants.operatesOn.href=$PUBLISHER_SERVICE_METADATA_OPERATESON \
 	-Dpublisher.service.metadata.generator-constants.onlineResource.wms=$PUBLISHER_SERVICE_METADATA_WMS \
 	-Dpublisher.service.metadata.generator-constants.onlineResource.wfs=$PUBLISHER_SERVICE_METADATA_WFS \
+	$ZK_CONF \
 	-jar /opt/geo-publisher/publisher-service.jar
