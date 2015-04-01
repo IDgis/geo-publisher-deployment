@@ -22,6 +22,9 @@ ENV PUBLISHER_SERVICE_METADATA_WMS="https://overijssel.geo-hosting.nl/geoserver/
 ENV PUBLISHER_SERVICE_METADATA_WFS="https://overijssel.geo-hosting.nl/geoserver/wfs?"
 ENV PUBLISHER_SERVICE_JAVA_OPTS=""
 
+ENV ZOOKEEPER_HOSTS="zookeeper:2181"
+ENV ZOOKEEPER_NAMESPACE=""
+
 # Copy the JAR and startup script:
 COPY /jars/publisher-service.jar /opt/geo-publisher/publisher-service.jar
 COPY /publisher-service.sh /opt/geo-publisher/
