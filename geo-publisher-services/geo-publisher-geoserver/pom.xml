@@ -6,7 +6,7 @@
 		<version>0.6.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>geo-publisher-geoserver</artifactId>
-	<packaging>pom</packaging>
+	<packaging>war</packaging>
 	<name>Geo Publisher deployment - Geoserver</name>
 
 	<repositories>
@@ -22,7 +22,7 @@
 	
 	<build>
 		<plugins>
-			<!-- Copy the Geoserver dependency: -->
+			<!-- Copy the Geoserver dependencies: -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -36,13 +36,6 @@
 						
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.geoserver.web</groupId>
-									<artifactId>gs-web-app</artifactId>
-									<version>${geoserver.version}</version>
-									<type>war</type>
-									<destFileName>geoserver.war</destFileName>
-								</artifactItem>
 								<artifactItem>
 									<groupId>nl.idgis.sys</groupId>
 									<artifactId>provisioning-registration-war</artifactId>
@@ -58,6 +51,27 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				
+				<configuration>
+					<warName>geoserver</warName>
+					<overlays>
+						<overlay>
+							<groupId>org.geoserver.web</groupId>
+							<artifactId>gs-web-app</artifactId>
+						</overlay>
+						<overlay>
+							<groupId>nl.idgis.sys</groupId>
+							<artifactId>provisioning-registration-war</artifactId>
+							<skip>true</skip>
+						</overlay>
+					</overlays>
+				</configuration>
 			</plugin>
 			
 			<!-- Build the Docker image: -->
@@ -77,6 +91,11 @@
 									<targetPath>/wars/</targetPath>
 									<directory>${project.build.directory}/wars/</directory>
 									<include>*.war</include>
+								</resource>
+								<resource>
+									<targetPath>/wars/</targetPath>
+									<directory>${project.build.directory}</directory>
+									<include>geoserver.war</include>
 								</resource>
 							</resources>
 						</configuration>		
@@ -98,6 +117,12 @@
 			<groupId>nl.idgis.sys</groupId>
 			<artifactId>provisioning-registration-war</artifactId>
 			<type>war</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geoserver.extension</groupId>
+			<artifactId>gs-charts</artifactId>
+			<version>${geoserver.version}</version>
 		</dependency>
 	</dependencies>
 
