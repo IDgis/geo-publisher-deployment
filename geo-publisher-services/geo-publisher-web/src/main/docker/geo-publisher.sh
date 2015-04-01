@@ -20,4 +20,7 @@ exec /opt/geo-publisher/bin/publisher-web \
 	-Dpublisher.admin.dashboard.errorCount=$PUBLISHER_WEB_ADMIN_DASHBOARD_ERROR_COUNT \
 	-Dpublisher.admin.dashboard.notificationCount=$PUBLISHER_WEB_ADMIN_DASHBOARD_NOTIFICATION_COUNT $PUBLISHER_WEB_JAVA_OPTS \
 	-DzooKeeper.hosts=zookeeper:2181 \
-	-Dapplication.domain=$PUBLISHER_WEB_DOMAIN
+	-Dapplication.domain=$PUBLISHER_WEB_DOMAIN \
+	-Dpublisher.preview.geoserverDomain=$PUBLISHER_GEOSERVER_STAGING_DOMAIN \
+	-Dpublisher.preview.geoserverPath=/$PUBLISHER_GEOSERVER_STAGING_NAME
+	
