@@ -31,6 +31,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	
   # Forward the exhibitor port:
   config.vm.network "forwarded_port", guest:8081, host: 8081
+  
+  # Forward the harvester port:
+  config.vm.network "forwarded_port", guest:4242, host:4242
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
