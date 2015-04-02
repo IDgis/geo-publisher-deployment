@@ -131,6 +131,10 @@ function create_container () {
 	eval $CONTAINER_COMMAND
 }
 
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+CERTS_PATH="$SCRIPTPATH/certs"
+FONTS_PATH="$SCRIPTPATH/fonts"
+
 echo ""
 echo "-------------------"
 echo "Creating base system"
@@ -140,8 +144,6 @@ create_data_container zookeeper-data "docker run --name zookeeper-data -d -v /va
 
 create_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
 
-SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
-CERTS_PATH="$SCRIPTPATH/certs"
 
 create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /etc/ssl/certs docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-ssl-private "docker run --name proxy-ssl-private -d -v /etc/ssl/private docker-apache:$SYSADMIN_VERSION true"
@@ -193,6 +195,13 @@ function create_geoserver () {
 	
 	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
 	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
+	
+	# Copy fonts:
+	if [ -e "$FONTS_PATH" ]; then
+		echo "Copying fonts from $FONTS_PATH to $GS_DATA_CONTAINER_NAME ..."
+		
+		docker run --rm --volumes-from $GS_DATA_CONTAINER_NAME -v "$FONTS_PATH:/opt/fonts" geo-publisher-geoserver:$VERSION sh -c 'cp /opt/fonts/* /var/lib/geo-publisher/geoserver/styles/'
+	fi 
 }
  
 # Stop and remove old geoserver containers:
