@@ -194,14 +194,15 @@ function create_geoserver () {
 	GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_NAME=$GS_NAME"
 	
 	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
-	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
 	
 	# Copy fonts:
 	if [ -e "$FONTS_PATH" ]; then
 		echo "Copying fonts from $FONTS_PATH to $GS_DATA_CONTAINER_NAME ..."
 		
 		docker run --rm --volumes-from $GS_DATA_CONTAINER_NAME -v "$FONTS_PATH:/opt/fonts" geo-publisher-geoserver:$VERSION sh -c 'cp /opt/fonts/* /var/lib/geo-publisher/geoserver/styles/'
-	fi 
+	fi
+	 
+	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
 }
  
 # Stop and remove old geoserver containers:

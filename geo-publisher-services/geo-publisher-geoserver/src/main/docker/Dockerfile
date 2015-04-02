@@ -46,6 +46,8 @@ RUN chmod +x /opt/start.sh && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR && \ 
 	mkdir -p $GEOSERVER_DATA_DIR && \
 	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR && \
+	mkdir -p $GEOSERVER_DATA_DIR/styles && \
+	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR/styles && \
 	mv /var/lib/tomcat7/webapps/geoserver.war /var/lib/tomcat7/webapps/geoserver.war-base
 	
 # Download and install the core fonts:
