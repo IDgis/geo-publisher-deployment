@@ -32,4 +32,5 @@ exec java -Dpublisher.service.akka.remote.netty.tcp.hostname=$IP_ADDR \
 	-Dpublisher.service.metadata.generator-constants.onlineResource.wms=$PUBLISHER_SERVICE_METADATA_WMS \
 	-Dpublisher.service.metadata.generator-constants.onlineResource.wfs=$PUBLISHER_SERVICE_METADATA_WFS \
 	$ZK_CONF \
+	-Dpublisher.service.raster.folder=/var/lib/geo-publisher/raster \
 	-jar /opt/geo-publisher/publisher-service.jar
