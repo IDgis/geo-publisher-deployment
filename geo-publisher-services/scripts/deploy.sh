@@ -174,6 +174,10 @@ create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-
 
 create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
 
+create_data_container gp-$INSTANCE-dv-db-backup "docker run --name gp-$INSTANCE-dv-db-backup -d -v /var/backups/postgresql docker-postgresql-backup:$SYSADMIN_VERSION true"
+
+create_container gp-$INSTANCE-db-backup "docker run --name gp-$INSTANCE-db-backup --link gp-$INSTANCE-db:db -d --volumes-from gp-$INSTANCE-dv-db-backup --restart=always -e PG_DATABASE=publisher $DOCKER_ENV docker-postgresql-backup:$SYSADMIN_VERSION" 
+
 echo ""
 echo "----------------------------"
 echo "Setting up publisher service"
