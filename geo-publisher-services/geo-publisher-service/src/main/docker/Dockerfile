@@ -39,10 +39,12 @@ RUN mkdir -p /var/lib/geo-publisher/dav/metadata/service-source && \
 	mkdir -p /var/lib/geo-publisher/dav/metadata/dataset-target && \
 	mkdir -p /var/lib/geo-publisher/dav/metadata/service-target && \
 	mkdir -p /etc/geo-publisher/ssl && \
+	mkdir -p /var/lib/geo-publisher/raster && \
 	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/service-source && \
 	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/dataset-target && \
 	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/service-target && \
-	chown publisher-service:publisher-service /etc/geo-publisher/ssl
+	chown publisher-service:publisher-service /etc/geo-publisher/ssl && \
+	chown publisher-service:publisher-service /var/lib/geo-publisher/raster
 
 # Expose network ports:
 EXPOSE 2552
