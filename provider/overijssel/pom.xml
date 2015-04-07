@@ -8,7 +8,7 @@
     
     <properties>
         <aspectj.version>1.8.0</aspectj.version>
-        <geo-publisher.version>0.3.0</geo-publisher.version>        
+        <geo-publisher.version>0.7.0</geo-publisher.version>        
     </properties>
     
     <repositories>
