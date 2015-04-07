@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
-		<version>0.1.1-SNAPSHOT</version>
+		<version>0.2.0</version>
 	</parent>
 	
 	<scm>
@@ -84,7 +84,7 @@
 			<dependency>
 				<groupId>nl.idgis.sys</groupId>
 				<artifactId>provisioning-registration-war</artifactId>
-				<version>0.1.1-SNAPSHOT</version>
+				<version>0.2.0</version>
 				<type>war</type>
 			</dependency>
 			
