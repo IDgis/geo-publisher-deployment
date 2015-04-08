@@ -146,7 +146,7 @@ create_data_container zookeeper-data "docker run --name zookeeper-data -d -v /va
 
 create_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
 
-
+create_data_container proxy-awstats "docker run --name proxy-awstats -d -v /var/lib/awstats -v /var/cache/awstats docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /etc/ssl/certs docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-ssl-private "docker run --name proxy-ssl-private -d -v /etc/ssl/private docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-logs "docker run --name proxy-logs -d -v /var/log/apache2 docker-apache:$SYSADMIN_VERSION true"
@@ -163,7 +163,7 @@ if [ -e "$CERTS_PATH/cert.pem" ]; then
 	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cabundle.pem /etc/ssl/certs/'
 fi
 
-create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
+create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-awstats --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
 
 echo ""
 echo "-------------------"
