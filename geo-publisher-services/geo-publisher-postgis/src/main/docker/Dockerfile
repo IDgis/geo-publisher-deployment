@@ -1,11 +1,13 @@
-FROM docker-postgis:0.2.0
+FROM docker-postgis:0.2.1-SNAPSHOT
 
 # Environment variables:
 ENV PG_DATABASE="publisher"
 ENV PG_VERSION_SCHEMA="publisher"
 ENV PG_VERSION_TABLE="version"
-ENV PUBLISHER_DATA_SOURCE_ID="my-provider-name"
-ENV PUBLISHER_DATA_SOURCE_NAME="My Provider Name"
+ENV PUBLISHER_DATA_SOURCE_ID="vector"
+ENV PUBLISHER_DATA_SOURCE_NAME="My Vector Provider Name"
+ENV PUBLISHER_RASTER_DATA_SOURCE_ID="raster"
+ENV PUBLISHER_RASTER_DATA_SOURCE_NAME="My Raster Provider Name"
 
 # Copy SQL scripts:
 COPY sql/*.sql /opt/sql/
