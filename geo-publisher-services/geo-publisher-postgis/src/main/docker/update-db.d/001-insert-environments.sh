@@ -8,7 +8,7 @@ function create_environment() {
 	ENVIRONMENT_CONFIDENTIAL="$3"
 	
 	ENVID=$(psql -d $PG_DATABASE -At -c "select identification from publisher.environment where identification = '$ENVIRONMENT_IDENTIFICATION';")
-	if [[ "${DSID}" != "$ENVIRONMENT_IDENTIFICATION" ]]; then
+	if [[ "${ENVID}" != "$ENVIRONMENT_IDENTIFICATION" ]]; then
 		echo "Inserting environment $ENVIRONMENT_NAME ($ENVIRONMENT_IDENTIFICATION, $ENVIRONMENT_CONFIDENTIAL) ..."
 		psql -d $PG_DATABASE -At -c "insert into publisher.environment(identification, name, confidential)values('$ENVIRONMENT_IDENTIFICATION', '$ENVIRONMENT_NAME', $ENVIRONMENT_CONFIDENTIAL);"
 	fi
