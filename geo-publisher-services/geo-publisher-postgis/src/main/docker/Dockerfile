@@ -1,4 +1,4 @@
-FROM docker-postgis:0.2.1-SNAPSHOT
+FROM docker-postgis:0.3.0
 
 # Environment variables:
 ENV PG_DATABASE="publisher"
