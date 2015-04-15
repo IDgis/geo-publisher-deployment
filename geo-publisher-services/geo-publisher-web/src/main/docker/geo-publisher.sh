@@ -11,6 +11,7 @@ echo "Starting publisher web for IP $IP_ADDR ..."
 
 # Start publisher-web with the provided arguments:
 exec /opt/geo-publisher/bin/publisher-web \
+	-Duser.timezone=$PUBLISHER_TIMEZONE \
 	-Dapplication.secret=$PUBLISHER_WEB_SECRET \
 	-Dakka.remote.netty.tcp.hostname=$IP_ADDR \
 	-Dakka.remote.netty.tcp.port=2552 \

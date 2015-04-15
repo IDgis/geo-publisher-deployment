@@ -7,8 +7,10 @@ if [ "$ZOOKEEPER_NAMESPACE" != "" ]; then
 	ZK_CONF="$ZK_CONF -Dpublisher.service.zooKeeper.namespace=$ZOOKEEPER_NAMESPACE"
 fi
 
-echo "Starting publisher service for IP $IP_ADDR ..."
-exec java -Dpublisher.service.akka.remote.netty.tcp.hostname=$IP_ADDR \
+echo "Starting publisher service for IP $IP_ADDR ($PUBLISHER_TIMEZONE)..."
+exec java \
+	-Duser.timezone=$PUBLISHER_TIMEZONE \
+	-Dpublisher.service.akka.remote.netty.tcp.hostname=$IP_ADDR \
 	-Dpublisher.service.akka.remote.netty.tcp.port=2552 \
 	-Dpublisher.service.akka.loglevel=$PUBLISHER_SERVICE_AKKA_LOGLEVEL \
 	-Dpublisher.service.database.url=jdbc:postgresql://db:5432/publisher \

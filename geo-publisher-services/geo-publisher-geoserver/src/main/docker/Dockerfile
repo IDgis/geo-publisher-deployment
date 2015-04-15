@@ -12,6 +12,7 @@ RUN apt-get update && \
 		wget
 
 # Environment variables:
+ENV PUBLISHER_TIMEZONE="Europe/Amsterdam"
 ENV PUBLISHER_GEOSERVER_DOMAIN="localhost"
 ENV PUBLISHER_GEOSERVER_USER="admin"
 ENV PUBLISHER_GEOSERVER_PASSWORD="admin"
