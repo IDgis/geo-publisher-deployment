@@ -7,6 +7,7 @@ RUN apt-get update && \
 		openjdk-8-jre-headless
 
 # Environment variables:
+ENV PUBLISHER_TIMEZONE="Europe/Amsterdam"
 ENV PG_USER="publisher"
 ENV PG_PASSWORD="publisher"
 ENV PUBLISHER_SERVICE_HOSTNAME="service"

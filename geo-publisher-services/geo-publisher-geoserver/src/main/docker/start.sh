@@ -22,6 +22,7 @@ if [ "$PUBLISHER_GEOSERVER_ALLOW_FROM" != "" ]; then
 fi
 JAVA_OPTS="$JAVA_OPTS -Dservice.path=/$PUBLISHER_GEOSERVER_NAME"
 JAVA_OPTS="$JAVA_OPTS -Dservice.forceHttps=$SERVICE_FORCE_HTTPS"
+JAVA_OPTS="$JAVA_OPTS -Duser.timezone=$PUBLISHER_TIMEZONE"
 
 # Copy the WAR to the correct name:
 cp /var/lib/tomcat7/webapps/geoserver.war-base /var/lib/tomcat7/webapps/$PUBLISHER_GEOSERVER_NAME.war
