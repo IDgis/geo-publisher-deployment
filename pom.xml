@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>nl.idgis.sys</groupId>
 		<artifactId>docker</artifactId>
-		<version>0.3.0</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	<scm>
