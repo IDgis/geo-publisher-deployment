@@ -7,6 +7,10 @@ if [ "$ZOOKEEPER_NAMESPACE" != "" ]; then
 	ZK_CONF="$ZK_CONF -Dpublisher.service.zooKeeper.namespace=$ZOOKEEPER_NAMESPACE"
 fi
 
+ROOT_DIR=/opt/geo-publisher
+JAR_FILE=$ROOT_DIR/publisher-service.jar
+MAIN_CLASS=$(unzip -p $JAR_FILE META-INF/MANIFEST.MF | grep Main-Class | sed -e "s/.*://g" -e s/\\r//g)
+
 echo "Starting publisher service for IP $IP_ADDR ($PUBLISHER_TIMEZONE)..."
 exec java \
 	-Duser.timezone=$PUBLISHER_TIMEZONE \
@@ -35,4 +39,4 @@ exec java \
 	-Dpublisher.service.metadata.generator-constants.onlineResource.wfs=$PUBLISHER_SERVICE_METADATA_WFS \
 	$ZK_CONF \
 	-Dpublisher.service.raster.folder=/var/lib/geo-publisher/raster \
-	-jar /opt/geo-publisher/publisher-service.jar
+	-cp $ROOT_DIR/classes:$JAR_FILE $MAIN_CLASS

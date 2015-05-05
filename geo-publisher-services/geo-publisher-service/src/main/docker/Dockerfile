@@ -11,7 +11,8 @@ RUN sed \
 RUN apt-get update && \
 	apt-get -qy upgrade && \
 	apt-get -qy install \
-		openjdk-8-jre-headless
+		openjdk-8-jre-headless \
+		unzip
 
 # Environment variables:
 ENV PUBLISHER_TIMEZONE="Europe/Amsterdam"
