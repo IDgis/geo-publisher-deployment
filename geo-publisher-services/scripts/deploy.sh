@@ -204,7 +204,7 @@ if [ -e "$CERTS_PATH/trusted.jks" ]; then
 	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
 fi 
 
-create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper -v /opt/geo-publisher/classes --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"
