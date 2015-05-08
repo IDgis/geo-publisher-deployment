@@ -1,12 +1,5 @@
 FROM ubuntu:vivid
 
-# Move system UID/GID range to make room for additional
-# UIDs/GIDs in later versions of the base image:
-RUN sed \
-	-e s/FIRST_SYSTEM_UID=.*/FIRST_SYSTEM_UID=900/g \
-	-e s/FIRST_SYSTEM_GID=.*/FIRST_SYSTEM_GID=900/g \ 
-	-i /etc/adduser.conf
-
 # Install software:
 RUN apt-get update && \
 	apt-get -qy install \
