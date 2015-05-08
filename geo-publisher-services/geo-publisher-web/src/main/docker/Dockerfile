@@ -1,12 +1,5 @@
 FROM ubuntu:vivid
 
-# Move system UID/GID range to make room for additional
-# UIDs/GIDs in later versions of the base image:
-RUN sed \
-	-e s/FIRST_SYSTEM_UID=.*/FIRST_SYSTEM_UID=900/g \
-	-e s/FIRST_SYSTEM_GID=.*/FIRST_SYSTEM_GID=900/g \ 
-	-i /etc/adduser.conf
-
 # Setup environment:
 ENV PUBLISHER_TIMEZONE="Europe/Amsterdam"
 ENV PUBLISHER_WEB_DOMAIN="localhost"
@@ -19,7 +12,6 @@ ENV PUBLISHER_WEB_JAVA_OPTS=""
 
 # Install Java:
 RUN apt-get update && \
-	apt-get -qy upgrade && \
 	apt-get -qy install \
 		openjdk-8-jre-headless \
 		unzip
