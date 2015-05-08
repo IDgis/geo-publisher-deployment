@@ -9,7 +9,6 @@ RUN sed \
 
 # Install Java:
 RUN apt-get update && \
-	apt-get -qy upgrade && \
 	apt-get -qy install \
 		openjdk-8-jre-headless \
 		unzip

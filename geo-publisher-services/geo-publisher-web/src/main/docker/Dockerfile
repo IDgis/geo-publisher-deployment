@@ -19,7 +19,6 @@ ENV PUBLISHER_WEB_JAVA_OPTS=""
 
 # Install Java:
 RUN apt-get update && \
-	apt-get -qy upgrade && \
 	apt-get -qy install \
 		openjdk-8-jre-headless \
 		unzip
