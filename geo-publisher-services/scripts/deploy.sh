@@ -111,7 +111,7 @@ function create_data_container () {
 	CONTAINER_NAME=$1
 	CONTAINER_COMMAND=$2
 	
-	COUNT=$(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "$CONTAINER_NAME" | wc -l)
+	COUNT=$(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "^$CONTAINER_NAME$" | wc -l)
 	if [[ $COUNT == 1 ]]; then
 		echo "Data container $CONTAINER_NAME exists, skipping."
 	else
@@ -128,14 +128,14 @@ function create_container () {
 	
 	echo "Creating container $CONTAINER_NAME ..."
 	
-	COUNT=$(docker ps | awk 'BEGIN {FS=" "}; {print $NF}' | grep "$CONTAINER_NAME" | wc -l)
+	COUNT=$(docker ps | awk 'BEGIN {FS=" "}; {print $NF}' | grep "^$CONTAINER_NAME$" | wc -l)
 	
 	if [[ $COUNT > 0 ]]; then
 		echo "    Stopping previous container $CONTAINER_NAME ..."
 		docker stop $CONTAINER_NAME > /dev/null
 	fi
 	
-	COUNT=$(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "$CONTAINER_NAME" | wc -l)
+	COUNT=$(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "^$CONTAINER_NAME$" | wc -l)
 	
 	if [[ $COUNT > 0 ]]; then
 		echo "    Removing container $CONTAINER_NAME ..."
