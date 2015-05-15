@@ -8,7 +8,7 @@
 	
 	<properties>
 		<geo-publisher.version>1.1.1</geo-publisher.version>
-		<geoserver.version>2.6.1-gpo-2</geoserver.version>
+		<geoserver.version>2.6.1-gpo-3</geoserver.version>
 	</properties>
 	
 	<parent>
