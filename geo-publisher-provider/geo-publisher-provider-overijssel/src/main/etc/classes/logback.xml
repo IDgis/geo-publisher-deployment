@@ -1,42 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
- 
-  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>output.log</file>
-    <append>true</append>
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-    </layout>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>output-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches 10MB -->
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+    <encoder>
+      <!--pattern>%msg%n</pattern-->
+      <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </encoder>
   </appender>
 
-  <!-- 
-  	<logger name="nl.idgis.publisher.provider" level="debug"/>
-  -->
-   
-  <!--   
-  	<logger name="nl.idgis.publisher.provider.App" level="debug"/>
-  -->  
 
-  <!-- 
+<!-- 
+  	<logger name="nl.idgis.publisher.provider" level="debug"/>
+  	<logger name="nl.idgis.publisher.provider.App" level="debug"/>
   	<logger name="nl.idgis.publisher.provider.metadata" level="debug"/>
-  -->
-  
-  <!-- 
   	<logger name="nl.idgis.publisher.database" level="debug"/>
-  -->
-  
-  <!-- 
   	<logger name="nl.idgis.publisher.provider.database" level="debug"/>
-   -->
-   
-  <!-- 
   	<logger name="nl.idgis.publisher.protocol.SSLHandler" level="debug"/>
-  -->
-  
-  <!-- 
   	<logger name="nl.idgis.publisher.protocol.MessageProtocolHandler" level="debug"/>
-  -->
-  <root level="info">
-    <appender-ref ref="FILE" />
+-->
+
+  
+  <root level="INFO">
+    <appender-ref ref="ROLLING" />
   </root>
 </configuration>
