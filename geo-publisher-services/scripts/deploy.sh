@@ -107,6 +107,20 @@ DOCKER_ENV="$DOCKER_ENV -e PUBLISHER_TIMEZONE=\"$PUBLISHER_TIMEZONE\""
 
 echo "Deploying Geo Publisher $INSTANCE $VERSION with sysadmin version $SYSADMIN_VERSION ..."
 
+function create_base_container () {
+	CONTAINER_NAME=$1
+        CONTAINER_COMMAND=$2
+
+	echo "Creating base container $CONTAINER_NAME ..."
+
+	COUNT=$(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "^$CONTAINER_NAME$" | wc -l)
+	if [[ $COUNT == 1 ]]; then
+                echo "    Base container $CONTAINER_NAME exists, skipping."
+        else
+		eval $CONTAINER_COMMAND
+	fi
+}
+
 function create_data_container () {
 	CONTAINER_NAME=$1
 	CONTAINER_COMMAND=$2
@@ -156,7 +170,7 @@ echo "--------------------"
 create_data_container zookeeper-log "docker run --name zookeeper-log -d -v /var/log/zookeeper docker-zookeeper:$SYSADMIN_VERSION true"
 create_data_container zookeeper-data "docker run --name zookeeper-data -d -v /var/lib/zookeeper docker-zookeeper:$SYSADMIN_VERSION true"
 
-create_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
+create_base_container base-zookeeper "docker run --name base-zookeeper -h zookeeper -d --volumes-from zookeeper-log --volumes-from zookeeper-data --restart=always docker-zookeeper:$SYSADMIN_VERSION"
 
 create_data_container proxy-awstats "docker run --name proxy-awstats -d -v /var/lib/awstats -v /var/cache/awstats docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /etc/ssl/certs docker-apache:$SYSADMIN_VERSION true"
@@ -175,7 +189,7 @@ if [ -e "$CERTS_PATH/cert.pem" ]; then
 	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cabundle.pem /etc/ssl/certs/'
 fi
 
-create_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-awstats --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
+create_base_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-awstats --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
 
 echo ""
 echo "-------------------"
