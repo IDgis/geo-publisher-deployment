@@ -51,7 +51,7 @@ RUN chmod +x /opt/start.sh && \
 	mv /var/lib/tomcat7/webapps/geoserver.war /var/lib/tomcat7/webapps/geoserver.war-base
 	
 # Download and install the core fonts:
-ENV MSCOREFONTS_BASE="http://softlayer-ams.dl.sourceforge.net/project/corefonts/the%20fonts/final/"
+ENV MSCOREFONTS_BASE="http://kent.dl.sourceforge.net/project/corefonts/the%20fonts/final/"
 RUN wget -q -O /tmp/andale32.exe "${MSCOREFONTS_BASE}andale32.exe" && \
 	wget -q -O /tmp/arial32.exe "${MSCOREFONTS_BASE}arial32.exe" && \
 	wget -q -O /tmp/arialb32.exe "${MSCOREFONTS_BASE}arialb32.exe" && \
