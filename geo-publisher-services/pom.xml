@@ -18,6 +18,7 @@
 		<module>geo-publisher-service</module>
 		<module>geo-publisher-geoserver</module>
 		<module>geo-publisher-dav</module>
+		<module>geo-publisher-viewer</module>
 	</modules>
 	
 	<dependencyManagement>

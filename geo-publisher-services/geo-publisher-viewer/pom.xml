@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>nl.idgis.publisher.deployment</groupId>
+		<artifactId>geo-publisher-services</artifactId>
+		<version>1.1.5-SNAPSHOT</version>
+	</parent>
+	<artifactId>geo-publisher-viewer</artifactId>
+	<packaging>pom</packaging>
+	<name>Geo Publisher deployment - Viewer</name>
+	<description>Contains the Viewer</description>
+	
+	<build>
+		<plugins>
+			<!-- Copy the Play dependency: -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				
+				<executions>
+					<execution>
+						<id>copy-service-jar</id>
+						
+						<goals><goal>copy</goal></goals>
+						<phase>package</phase>
+						
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>nl.idgis</groupId>
+									<artifactId>geopublisher-viewer</artifactId>
+									<version>${geopublisher-viewer.version}</version>
+									<type>zip</type>
+									<destFileName>geopublisher-viewer.zip</destFileName>
+								</artifactItem>
+							</artifactItems>
+							
+							<outputDirectory>${project.build.directory}/play-app/</outputDirectory>
+							<overWriteRelease>false</overWriteRelease>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Create the Docker image: -->		
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				
+				<!-- Augment the execution with extra configuration: add resources. -->
+				<executions>
+					<execution>
+						<phase>package</phase>				
+						<goals><goal>build</goal></goals>
+						
+						<configuration>				
+							<resources>
+								<resource>
+									<targetPath>/play-app/</targetPath>
+									<directory>${project.build.directory}/play-app/</directory>
+									<include>*.zip</include>
+								</resource>
+							</resources>
+						</configuration>		
+					</execution>
+				</executions>
+				
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>nl.idgis</groupId>
+			<artifactId>geopublisher-viewer</artifactId>
+			<version>${geopublisher-viewer.version}</version>
+			<type>zip</type>
+		</dependency>
+	</dependencies>
+	
+</project>
