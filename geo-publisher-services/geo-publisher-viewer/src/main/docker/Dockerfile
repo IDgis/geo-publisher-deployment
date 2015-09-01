@@ -1,6 +1,10 @@
 FROM ubuntu:vivid
 
 # Setup environment:
+ENV ZOOKEEPER_HOSTS="zookeeper:2181"
+
+ENV VIEWER_DOMAIN=localhost
+ENV VIEWER_CONTEXT=/viewer
 ENV VIEWER_ENVIRONMENT_URL="http://localhost/geoserver/"
 ENV VIEWER_USERNAME="admin"
 ENV VIEWER_PASSWORD="admin"
