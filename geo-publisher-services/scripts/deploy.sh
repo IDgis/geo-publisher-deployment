@@ -280,3 +280,41 @@ create_geoserver staging 1 $PUBLISHER_GEOSERVER_STAGING_DOMAIN $PUBLISHER_GEOSER
 create_geoserver secure 1 $PUBLISHER_GEOSERVER_SECURE_DOMAIN $PUBLISHER_GEOSERVER_SECURE_NAME $PUBLISHER_GEOSERVER_SECURE_ALLOW_FROM
 create_geoserver public 1 $PUBLISHER_GEOSERVER_PUBLIC_DOMAIN $PUBLISHER_GEOSERVER_PUBLIC_NAME ""
 create_geoserver guaranteed 1 $PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN $PUBLISHER_GEOSERVER_GUARANTEED_NAME $PUBLISHER_GEOSERVER_GUARANTEED_ALLOW_FROM
+
+echo ""
+echo "------------------------------"
+echo "Setting up Viewer instances"
+echo "------------------------------"
+#
+# Creates a set of viewer containers:
+#  create_viewer [type] [domain] [environment_url] [password]
+#
+function create_viewer () {
+	VIEWER_TYPE=$1
+	VIEWER_DOMAIN=$2
+	VIEWER_ENVIRONMENT_URL=$3
+	VIEWER_PASSWORD=$4
+	VIEWER_CONTAINER_NAME="gp-$INSTANCE-viewer-$VIEWER_TYPE"
+	VIEWER_HOST="viewer-$VIEWER_TYPE"
+	VIEWER_ENV="-e VIEWER_ENVIRONMENT_URL=$VIEWER_ENVIRONMENT_URL"
+	VIEWER_ENV="$VIEWER_ENV -e VIEWER_PASSWORD=$VIEWER_PASSWORD"
+	VIEWER_ENV="$VIEWER_ENV -e VIEWER_DOMAIN=$VIEWER_DOMAIN"
+
+	create_container $VIEWER_CONTAINER_NAME "docker run --name $VIEWER_CONTAINER_NAME -h $VIEWER_HOST -d --link base-zookeeper:zookeeper --restart=always $DOCKER_ENV $VIEWER_ENV geo-publisher-viewer:$VERSION"
+}
+
+# Stop and remove old viewer containers:
+for i in $(docker ps | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-viewer-"); do
+	echo "Stopping viewer $i ..."
+	docker stop $i > /dev/null
+done
+for i in $(docker ps -a | awk 'BEGIN {FS=" "}; {print $NF}' | grep "gp-$INSTANCE-viewer-"); do
+	echo "Removing viewer $i ..."
+	docker rm $i > /dev/null
+done
+
+# Create viewer instances:
+create_viewer staging $PUBLISHER_GEOSERVER_STAGING_DOMAIN "http://"$PUBLISHER_GEOSERVER_STAGING_DOMAIN"/geoserver/" $PUBLISHER_GEOSERVER_PASSWORD
+create_viewer secure $PUBLISHER_GEOSERVER_SECURE_DOMAIN "http://"$PUBLISHER_GEOSERVER_SECURE_DOMAIN"/geoserver/" $PUBLISHER_GEOSERVER_PASSWORD
+create_viewer public $PUBLISHER_GEOSERVER_PUBLIC_DOMAIN "http://"$PUBLISHER_GEOSERVER_PUBLIC_DOMAIN"/geoserver/" $PUBLISHER_GEOSERVER_PASSWORD
+create_viewer guaranteed $PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN "http://"$PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN"/geoserver/" $PUBLISHER_GEOSERVER_PASSWORD
