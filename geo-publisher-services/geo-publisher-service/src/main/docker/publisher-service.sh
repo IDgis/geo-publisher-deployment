@@ -34,9 +34,12 @@ exec java \
 	-Dpublisher.service.metadata.serviceSource=/var/lib/geo-publisher/dav/metadata/service-source \
 	-Dpublisher.service.metadata.datasetTarget=/var/lib/geo-publisher/dav/metadata/dataset-target \
 	-Dpublisher.service.metadata.serviceTarget=/var/lib/geo-publisher/dav/metadata/service-target \
-	-Dpublisher.service.metadata.generator-constants.operatesOn.href=$PUBLISHER_SERVICE_METADATA_OPERATESON \
-	-Dpublisher.service.metadata.generator-constants.onlineResource.wms=$PUBLISHER_SERVICE_METADATA_WMS \
-	-Dpublisher.service.metadata.generator-constants.onlineResource.wfs=$PUBLISHER_SERVICE_METADATA_WFS \
+	-Dpublisher.service.metadata.environments.geoserver-public.serviceLinkagePrefix="http://"$PUBLISHER_GEOSERVER_PUBLIC_DOMAIN"/geoserver/" \
+	-Dpublisher.service.metadata.environments.geoserver-public.datasetMetadataPrefix="http://"$PUBLISHER_DAV_DOMAIN"/dav/metadata/dataset-target/geoserver-public" \
+	-Dpublisher.service.metadata.environments.geoserver-secure.serviceLinkagePrefix="https://"$PUBLISHER_GEOSERVER_SECURE_DOMAIN"/geoserver/" \
+	-Dpublisher.service.metadata.environments.geoserver-secure.datasetMetadataPrefix="https://"$PUBLISHER_DAV_DOMAIN"/dav/metadata/dataset-target/geoserver-secure" \
+	-Dpublisher.service.metadata.environments.geoserver-guaranteed.serviceLinkagePrefix="http://"$PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN"/geoserver/" \
+	-Dpublisher.service.metadata.environments.geoserver-guaranteed.datasetMetadataPrefix="http://"$PUBLISHER_DAV_DOMAIN"/dav/metadata/dataset-target/geoserver-guaranteed" \
 	$ZK_CONF \
 	-Dpublisher.service.raster.folder=/var/lib/geo-publisher/raster \
 	-cp $ROOT_DIR/classes:$JAR_FILE $MAIN_CLASS
