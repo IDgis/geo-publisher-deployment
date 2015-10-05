@@ -24,7 +24,23 @@ JAVA_OPTS="$JAVA_OPTS -Dservice.path=/$PUBLISHER_GEOSERVER_NAME"
 JAVA_OPTS="$JAVA_OPTS -Dservice.forceHttps=$SERVICE_FORCE_HTTPS"
 JAVA_OPTS="$JAVA_OPTS -Duser.timezone=$PUBLISHER_TIMEZONE"
 
-# Copy the WAR to the correct name:
-cp /var/lib/tomcat7/webapps/geoserver.war-base /var/lib/tomcat7/webapps/$PUBLISHER_GEOSERVER_NAME.war
+# Unzip the WAR to the correct webapp name:
+unzip /var/lib/tomcat7/webapps/geoserver.war-base -d /var/lib/tomcat7/webapps/$PUBLISHER_GEOSERVER_NAME
+
+# Remove jdbc driver from webapp
+rm /var/lib/tomcat7/webapps/$PUBLISHER_GEOSERVER_NAME/WEB-INF/lib/postgresql*.jar
+
+# Create jdni resource
+echo \
+"<Context>"\
+	"<Resource "\
+		"name=\"jdbc/db\" "\
+		"auth=\"Container\" "\
+		"type=\"javax.sql.DataSource\" "\
+		"driverClassName=\"org.postgresql.Driver\" "\
+		"url=\"jdbc:postgresql://db:5432/publisher\" "\
+		"username=\"$PG_USER\" "\
+		"password=\"$PG_PASSWORD\" />"\
+"</Context>" > /var/lib/tomcat7/conf/Catalina/localhost/$PUBLISHER_GEOSERVER_NAME.xml
 
 exec /usr/share/tomcat7/bin/catalina.sh run

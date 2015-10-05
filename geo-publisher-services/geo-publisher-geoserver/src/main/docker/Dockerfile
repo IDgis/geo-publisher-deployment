@@ -1,13 +1,14 @@
 FROM ubuntu:vivid
 
 # Install software:
-RUN apt-get update && \
-	apt-get -qy install \
-		openjdk-8-jre-headless \
-		tomcat7 \
+RUN apt-get update \
+	&& apt-get -qy install \
+		cabextract \
 		fontconfig \
 		fonts-liberation \
-		cabextract \
+		openjdk-8-jre-headless \
+		tomcat7 \
+		unzip \
 		wget
 
 # Environment variables:
@@ -40,7 +41,7 @@ COPY /wars/*.war /var/lib/tomcat7/webapps/
 COPY /start.sh /opt/start.sh
 COPY /server.xml /var/lib/tomcat7/conf/server.xml
 
-# Set permissions and create data directory:
+# Set permissions, create data directory, rename war and install jdbc driver
 RUN chmod +x /opt/start.sh && \
 	mkdir -p $CATALINA_TMPDIR && \
 	chown tomcat7:tomcat7 $CATALINA_TMPDIR && \ 
@@ -48,7 +49,13 @@ RUN chmod +x /opt/start.sh && \
 	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR && \
 	mkdir -p $GEOSERVER_DATA_DIR/styles && \
 	chown tomcat7:tomcat7 $GEOSERVER_DATA_DIR/styles && \
-	mv /var/lib/tomcat7/webapps/geoserver.war /var/lib/tomcat7/webapps/geoserver.war-base
+	mv /var/lib/tomcat7/webapps/geoserver.war /var/lib/tomcat7/webapps/geoserver.war-base && \
+	unzip -p /var/lib/tomcat7/webapps/geoserver.war-base "WEB-INF/lib/postgresql*" > \
+		/usr/share/tomcat7/lib/$(\
+			 unzip -l /var/lib/tomcat7/webapps/geoserver.war-base \
+			 | grep "WEB-INF/lib/postgresql" \
+			 | awk '{print $NF}'\
+			 | sed -r "s/WEB-INF\/lib\/(.*)/\1/g")
 	
 # Download and install the core fonts:
 ENV MSCOREFONTS_BASE="http://kent.dl.sourceforge.net/project/corefonts/the%20fonts/final/"
