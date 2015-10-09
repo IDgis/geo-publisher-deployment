@@ -37,14 +37,12 @@ RUN addgroup publisher-service && \
 	adduser --system --disabled-password --disabled-login --ingroup publisher-service --no-create-home publisher-service
 	
 # Create metadata and configuration folders:
-RUN mkdir -p /var/lib/geo-publisher/dav/metadata/service-source && \
-	mkdir -p /var/lib/geo-publisher/dav/metadata/dataset-target && \
-	mkdir -p /var/lib/geo-publisher/dav/metadata/service-target && \
+RUN mkdir -p /var/lib/geo-publisher/dav/metadata/dataset && \
+	mkdir -p /var/lib/geo-publisher/dav/metadata/service && \
 	mkdir -p /etc/geo-publisher/ssl && \
 	mkdir -p /var/lib/geo-publisher/raster && \
-	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/service-source && \
-	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/dataset-target && \
-	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/service-target && \
+	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/dataset && \
+	chown publisher-service:publisher-service /var/lib/geo-publisher/dav/metadata/service && \
 	chown publisher-service:publisher-service /etc/geo-publisher/ssl && \
 	chown publisher-service:publisher-service /var/lib/geo-publisher/raster
 

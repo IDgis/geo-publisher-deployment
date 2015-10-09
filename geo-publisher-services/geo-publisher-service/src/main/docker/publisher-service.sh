@@ -31,9 +31,8 @@ exec java \
 	-Dpublisher.service.harvester.ssl.trusted.file=/etc/geo-publisher/ssl/trusted.jks \
 	-Dpublisher.service.harvester.ssl.trusted.password=$PUBLISHER_SERVICE_HARVESTER_SSL_TRUSTED_PASSWORD \
 	-Dpublisher.service.monitor.showTrees=$PUBLISHER_SERVICE_MONITOR_SHOWTREES $PUBLISHER_SERVICE_JAVA_OPTS \
-	-Dpublisher.service.metadata.serviceSource=/var/lib/geo-publisher/dav/metadata/service-source \
-	-Dpublisher.service.metadata.datasetTarget=/var/lib/geo-publisher/dav/metadata/dataset-target \
-	-Dpublisher.service.metadata.serviceTarget=/var/lib/geo-publisher/dav/metadata/service-target \
+	-Dpublisher.service.metadata.datasetTarget=/var/lib/geo-publisher/dav/metadata/dataset \
+	-Dpublisher.service.metadata.serviceTarget=/var/lib/geo-publisher/dav/metadata/service \
 	-Dpublisher.service.metadata.environments.geoserver-public.serviceLinkagePrefix="http://"$PUBLISHER_GEOSERVER_PUBLIC_DOMAIN"/geoserver/" \
 	-Dpublisher.service.metadata.environments.geoserver-public.datasetMetadataPrefix="http://"$PUBLISHER_DAV_DOMAIN"/dav/metadata/dataset-target/geoserver-public" \
 	-Dpublisher.service.metadata.environments.geoserver-secure.serviceLinkagePrefix="https://"$PUBLISHER_GEOSERVER_SECURE_DOMAIN"/geoserver/" \
