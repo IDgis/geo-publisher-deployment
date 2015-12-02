@@ -40,7 +40,12 @@ echo \
 		"driverClassName=\"org.postgresql.Driver\" "\
 		"url=\"jdbc:postgresql://db:5432/publisher\" "\
 		"username=\"$PG_USER\" "\
-		"password=\"$PG_PASSWORD\" />"\
+		"password=\"$PG_PASSWORD\" "\
+		"defaultAutoCommit=\"false\" "\
+		"rollbackOnReturn=\"true\" "\
+		"testOnBorrow=\"true\" "\
+		"validationInterval=\"0\" "\
+	"/>"\
 "</Context>" > /var/lib/tomcat7/conf/Catalina/localhost/$PUBLISHER_GEOSERVER_NAME.xml
 
 exec /usr/share/tomcat7/bin/catalina.sh run
