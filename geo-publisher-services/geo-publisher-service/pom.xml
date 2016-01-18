@@ -29,12 +29,12 @@
 								<artifactItem>
 									<groupId>nl.idgis.publisher</groupId>
 									<artifactId>publisher-service</artifactId>
-									<type>jar</type>
-									<destFileName>publisher-service.jar</destFileName>
+									<type>zip</type>
+									<destFileName>publisher-service.zip</destFileName>
 								</artifactItem>
 							</artifactItems>
 							
-							<outputDirectory>${project.build.directory}/jars/</outputDirectory>
+							<outputDirectory>${project.build.directory}/zip/</outputDirectory>
 							<overWriteRelease>false</overWriteRelease>
 							<overWriteSnapshots>true</overWriteSnapshots>
 							
@@ -57,9 +57,9 @@
 						<configuration>				
 							<resources>
 								<resource>
-									<targetPath>/jars/</targetPath>
-									<directory>${project.build.directory}/jars/</directory>
-									<include>*.jar</include>
+									<targetPath>/opt/</targetPath>
+									<directory>${project.build.directory}/zip/</directory>
+									<include>*.zip</include>
 								</resource>
 							</resources>
 						</configuration>		
@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>nl.idgis.publisher</groupId>
 			<artifactId>publisher-service</artifactId>
-			<type>jar</type>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 	

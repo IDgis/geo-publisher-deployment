@@ -28,9 +28,13 @@ ENV ZOOKEEPER_HOSTS="zookeeper:2181"
 ENV ZOOKEEPER_NAMESPACE=""
 
 # Copy the JAR and startup script:
-COPY /jars/publisher-service.jar /opt/geo-publisher/publisher-service.jar
+COPY /opt/publisher-service.zip /opt/publisher-service.zip
+RUN unzip -d /opt /opt/publisher-service.zip && \
+	rm /opt/publisher-service.zip && \
+	for i in /opt/*; do echo "$i -> /opt/geo-publisher"; mv $i /opt/geo-publisher; done
 COPY /publisher-service.sh /opt/geo-publisher/
-RUN chmod +x /opt/geo-publisher/publisher-service.sh
+RUN chmod +x /opt/geo-publisher/publisher-service.sh && \
+	chmod +x /opt/geo-publisher/bin/publisher-service
 
 # Create user and group:
 RUN addgroup publisher-service && \
