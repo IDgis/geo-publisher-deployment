@@ -42,7 +42,7 @@
 			<dependency>
 				<groupId>nl.idgis.publisher</groupId>
 				<artifactId>publisher-service</artifactId>
-				<type>jar</type>
+				<type>zip</type>
 				<version>${geo-publisher.version}</version>
 			</dependency>
 			<dependency>
