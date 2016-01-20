@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ -e /opt/geo-publisher/RUNNING_PID ]; then
-	rm /opt/geo-publisher/RUNNING_PID
+if [ -e /RUNNING_PID ]; then
+	rm /RUNNING_PID
 fi
 
 IP_ADDR=$(grep "$HOSTNAME" /etc/hosts | head -n 1 | awk 'BEGIN {FS=" "}; {print $1}')
