@@ -230,7 +230,7 @@ echo ""
 echo "------------------------"
 echo "Setting up publisher DAV"
 echo "------------------------"
-create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-service-metadata --restart=always $DOCKER_ENV geo-publisher-dav:$VERSION"
+create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --restart=always $DOCKER_ENV geo-publisher-dav:$VERSION"
 
 echo ""
 echo "------------------------------"

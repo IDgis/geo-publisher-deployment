@@ -25,14 +25,15 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>nl.idgis.sys</groupId>
-									<artifactId>provisioning-registration-war</artifactId>
-									<type>war</type>
-									<destFileName>provisioning-registration.war</destFileName>
+									<groupId>nl.idgis.publisher</groupId>
+									<artifactId>publisher-metadata</artifactId>
+									<type>zip</type>
+									<classifier>app</classifier>
+									<destFileName>publisher-metadata.zip</destFileName>
 								</artifactItem>
 							</artifactItems>
 							
-							<outputDirectory>${project.build.directory}/wars/</outputDirectory>
+							<outputDirectory>${project.build.directory}/play-app/</outputDirectory>
 							<overWriteRelease>false</overWriteRelease>
 							<overWriteSnapshots>true</overWriteSnapshots>
 							
@@ -55,9 +56,9 @@
 						<configuration>				
 							<resources>
 								<resource>
-									<targetPath>/wars/</targetPath>
-									<directory>${project.build.directory}/wars/</directory>
-									<include>*.war</include>
+									<targetPath>/opt/</targetPath>
+									<directory>${project.build.directory}/play-app/</directory>
+									<include>publisher-metadata.zip</include>
 								</resource>
 							</resources>
 						</configuration>		

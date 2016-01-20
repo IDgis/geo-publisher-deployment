@@ -41,6 +41,13 @@
 			</dependency>
 			<dependency>
 				<groupId>nl.idgis.publisher</groupId>
+				<artifactId>publisher-metadata</artifactId>
+				<type>zip</type>
+				<classifier>app</classifier>
+				<version>${geo-publisher.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>nl.idgis.publisher</groupId>
 				<artifactId>publisher-service</artifactId>
 				<type>zip</type>
 				<version>${geo-publisher.version}</version>
