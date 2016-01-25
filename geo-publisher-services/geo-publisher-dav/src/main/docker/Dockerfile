@@ -3,6 +3,7 @@ FROM ubuntu:vivid
 # Setup environment:
 ENV PUBLISHER_TIMEZONE="Europe/Amsterdam"
 ENV PUBLISHER_DAV_DOMAIN="localhost"
+ENV PUBLISHER_DAV_TRUSTED_ADDRESSES="127.0.0.1,::1"
 ENV PUBLISHER_GEOSERVER_SECURE_DOMAIN="secure-services.geodataoverijssel.nl"
 ENV PUBLISHER_GEOSERVER_GUARANTEED_DOMAIN="guaranteed-services.geodataoverijssel.nl"
 ENV PUBLISHER_GEOSERVER_PUBLIC_DOMAIN="services.geodataoverijssel.nl"
