@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ -e /RUNNING_PID ]; then
-	rm /RUNNING_PID
-fi
-
 IP_ADDR=$(grep "$HOSTNAME" /etc/hosts | head -n 1 | awk 'BEGIN {FS=" "}; {print $1}')
 IP_ADDR_SERVICE=$(grep service /etc/hosts | head -n 1 | awk 'BEGIN {FS=" "}; {print $1}')
 
