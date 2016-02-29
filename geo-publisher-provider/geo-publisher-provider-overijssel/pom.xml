@@ -19,6 +19,7 @@
         <dependency>
             <groupId>nl.idgis.publisher</groupId>
             <artifactId>publisher-provider-app</artifactId>
+            <classifier>all</classifier>
             <version>${geo-publisher.version}</version>
         </dependency>
         <dependency>
@@ -46,32 +47,6 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/assembly.xml</descriptor>
                             </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>                
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <phase>generate-resources</phase>                        
-                        <configuration>
-                            <stripVersion>true</stripVersion>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>nl.idgis.publisher</groupId>
-                                    <artifactId>publisher-provider-app</artifactId>                                    
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.aspectj</groupId>
-                                    <artifactId>aspectjweaver</artifactId>                                    
-                                </artifactItem>
-                            </artifactItems>                            
-                            <outputDirectory>${project.build.directory}/content/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
