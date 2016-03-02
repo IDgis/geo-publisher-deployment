@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>nl.idgis.publisher.deployment</groupId>
 		<artifactId>geo-publisher-provider</artifactId>
-		<version>1.1.9-SNAPSHOT</version>
+		<version>1.1.10-SNAPSHOT</version>
 	</parent>
 	
     <properties>
@@ -21,6 +21,16 @@
             <artifactId>publisher-provider-app</artifactId>
             <classifier>all</classifier>
             <version>${geo-publisher.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>publisher.publisher-provider</groupId>
+                    <artifactId>publisher-provider-protocol</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>publisher</groupId>
+                    <artifactId>publisher-commons</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
