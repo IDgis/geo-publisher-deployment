@@ -179,16 +179,12 @@ create_data_container proxy-ssl-certs "docker run --name proxy-ssl-certs -d -v /
 create_data_container proxy-ssl-private "docker run --name proxy-ssl-private -d -v /etc/ssl/private docker-apache:$SYSADMIN_VERSION true"
 create_data_container proxy-logs "docker run --name proxy-logs -d -v /var/log/apache2 docker-apache:$SYSADMIN_VERSION true"
 
-if [ -e "$CERTS_PATH/cert.pem" ]; then
-	echo "Found certificates in $CERTS_PATH, copying into data volumes ..."
-	
-	PROXY_SETTINGS="-e APACHE_SSL_CERTIFICATE_FILE=/etc/ssl/certs/cert.pem"
-	PROXY_SETTINGS="$PROXY_SETTINGS -e APACHE_SSL_CERTIFICATE_KEY_FILE=/etc/ssl/private/private.key"
-	PROXY_SETTINGS="$PROXY_SETTINGS -e APACHE_SSL_CERTIFICATE_CHAIN_FILE=/etc/ssl/certs/cabundle.pem"
-	
-	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cert.pem /etc/ssl/certs/'
-	docker run --rm --volumes-from proxy-ssl-private -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/private.key /etc/ssl/private/'
-	docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cabundle.pem /etc/ssl/certs/'
+if [ -e "$CERTS_PATH" ]; then
+        echo "Found certificates in $CERTS_PATH, copying into data volumes ..."
+
+        docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/*.pem /etc/ssl/certs/'
+        docker run --rm --volumes-from proxy-ssl-private -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/*.key /etc/ssl/private/'
+        docker run --rm --volumes-from proxy-ssl-certs -v "$CERTS_PATH:/opt/ssl/certs" docker-apache:$SYSADMIN_VERSION sh -c 'cp /opt/ssl/certs/cabundle.pem /etc/ssl/certs/'
 fi
 
 create_base_container base-proxy "docker run --name base-proxy -h proxy -d --link base-zookeeper:zookeeper --volumes-from proxy-awstats --volumes-from proxy-ssl-certs --volumes-from proxy-ssl-private --volumes-from proxy-logs --restart=always -p 80:80 -p 443:443 $PROXY_SETTINGS docker-apache:$SYSADMIN_VERSION"
