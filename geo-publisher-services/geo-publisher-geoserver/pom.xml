@@ -124,6 +124,11 @@
 			<artifactId>gs-charts</artifactId>
 			<version>${geoserver.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geoserver.extension</groupId>
+			<artifactId>gs-dxf-core</artifactId>
+			<version>${geoserver.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>
