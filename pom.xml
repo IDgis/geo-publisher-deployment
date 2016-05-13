@@ -71,6 +71,32 @@
 	</modules>
 	
 	<build>
+		<pluginManagement>
+				<plugins>	
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<encoding>utf-8</encoding>
+						</configuration>
+					</plugin>
+					
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.2</version>
+						<configuration>
+							<goals>install</goals>
+							<!-- no 'deploy' in order to be able to use release:perform without maven repository -->
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<pushChanges>false</pushChanges>
+						</configuration>
+					</plugin>
+				</plugins>
+		</pluginManagement>
+	
 		<plugins>
 			<!-- Configure the release plugin: -->
 			<plugin>
