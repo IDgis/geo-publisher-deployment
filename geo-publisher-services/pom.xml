@@ -72,7 +72,7 @@
 					<configuration>
 						<buildDirectory>${project.build.directory}/docker</buildDirectory>
 						<dockerDirectory>${basedir}/src/main/docker</dockerDirectory>
-						<imageName>${project.artifactId}:${project.version}</imageName>
+						<imageName>idgis/${project.artifactId}:${project.version}</imageName>
 					</configuration>
 
 					<executions>
