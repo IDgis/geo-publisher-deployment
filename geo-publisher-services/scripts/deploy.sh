@@ -194,10 +194,10 @@ echo ""
 echo "-------------------"
 echo "Setting up database"
 echo "-------------------"
-create_data_container gp-$INSTANCE-dv-db-data "docker run --name gp-$INSTANCE-dv-db-data -d -v /var/lib/postgresql geo-publisher-postgis:$VERSION true"
-create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-db-log -d -v /var/log/postgresql geo-publisher-postgis:$VERSION true"
+create_data_container gp-$INSTANCE-dv-db-data "docker run --name gp-$INSTANCE-dv-db-data -d -v /var/lib/postgresql idgis/geo-publisher-postgis:$VERSION true"
+create_data_container gp-$INSTANCE-dv-db-log "docker run --name gp-$INSTANCE-dv-db-log -d -v /var/log/postgresql idgis/geo-publisher-postgis:$VERSION true"
 
-create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV geo-publisher-postgis:$VERSION"
+create_container gp-$INSTANCE-db "docker run --name gp-$INSTANCE-db -h db -d --link base-zookeeper:zookeeper --volumes-from gp-$INSTANCE-dv-db-data --volumes-from gp-$INSTANCE-dv-db-log --restart=always $DOCKER_ENV idgis/geo-publisher-postgis:$VERSION"
 
 create_data_container gp-$INSTANCE-dv-db-backup "docker run --name gp-$INSTANCE-dv-db-backup -d -v /var/backups/postgresql docker-postgresql-backup:$SYSADMIN_VERSION true"
 
@@ -207,29 +207,29 @@ echo ""
 echo "----------------------------"
 echo "Setting up publisher service"
 echo "----------------------------"
-create_data_container gp-$INSTANCE-dv-raster "docker run --name gp-$INSTANCE-dv-raster -d -v /var/lib/geo-publisher/raster geo-publisher-service:$VERSION true"
-create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl geo-publisher-service:$VERSION true"
-create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-raster "docker run --name gp-$INSTANCE-dv-raster -d -v /var/lib/geo-publisher/raster idgis/geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-service-sslconf "docker run --name gp-$INSTANCE-dv-service-sslconf -d -v /etc/geo-publisher/ssl idgis/geo-publisher-service:$VERSION true"
+create_data_container gp-$INSTANCE-dv-service-metadata "docker run --name gp-$INSTANCE-dv-service-metadata -d -v /var/lib/geo-publisher/dav/metadata idgis/geo-publisher-service:$VERSION true"
  
 if [ -e "$CERTS_PATH/trusted.jks" ]; then
 	echo "Certificates found at $CERTS_PATH, copying to data volumes ..."
 	
-	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
+	docker run --rm --volumes-from gp-$INSTANCE-dv-service-sslconf -v "$CERTS_PATH:/opt/certs" idgis/geo-publisher-service:$VERSION sh -c 'cp /opt/certs/*.jks /etc/geo-publisher/ssl/'
 fi 
 
-create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper -v /opt/geo-publisher/classes --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV geo-publisher-service:$VERSION"
+create_container gp-$INSTANCE-service "docker run --name gp-$INSTANCE-service -p 4242:4242 -h service -d --link base-zookeeper:zookeeper -v /opt/geo-publisher/classes --volumes-from gp-$INSTANCE-dv-service-sslconf --volumes-from gp-$INSTANCE-dv-service-metadata --link gp-$INSTANCE-db:db --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV idgis/geo-publisher-service:$VERSION"
 
 echo ""
 echo "------------------------"
 echo "Setting up publisher web"
 echo "------------------------"
-create_container gp-$INSTANCE-web "docker run --name gp-$INSTANCE-web -h web -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-service:service --restart=always $DOCKER_ENV geo-publisher-web:$VERSION"
+create_container gp-$INSTANCE-web "docker run --name gp-$INSTANCE-web -h web -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-service:service --restart=always $DOCKER_ENV idgis/geo-publisher-web:$VERSION"
 
 echo ""
 echo "------------------------"
 echo "Setting up publisher DAV"
 echo "------------------------"
-create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --restart=always $DOCKER_ENV geo-publisher-dav:$VERSION"
+create_container gp-$INSTANCE-dav "docker run --name gp-$INSTANCE-dav -h metadata -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --restart=always $DOCKER_ENV idgis/geo-publisher-dav:$VERSION"
 
 echo ""
 echo "------------------------------"
@@ -252,16 +252,16 @@ function create_geoserver () {
 	GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_ALLOW_FROM=$GS_ALLOW_FROM"
 	GS_ENV="$GS_ENV -e PUBLISHER_GEOSERVER_NAME=$GS_NAME"
 	
-	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver geo-publisher-geoserver:$VERSION true"
+	create_data_container $GS_DATA_CONTAINER_NAME "docker run --name $GS_DATA_CONTAINER_NAME -d -v /var/lib/geo-publisher/geoserver idgis/geo-publisher-geoserver:$VERSION true"
 	
 	# Copy fonts:
 	if [ -e "$FONTS_PATH" ]; then
 		echo "Copying fonts from $FONTS_PATH to $GS_DATA_CONTAINER_NAME ..."
 		
-		docker run --rm --volumes-from $GS_DATA_CONTAINER_NAME -v "$FONTS_PATH:/opt/fonts" geo-publisher-geoserver:$VERSION sh -c 'cp /opt/fonts/* /var/lib/geo-publisher/geoserver/styles/'
+		docker run --rm --volumes-from $GS_DATA_CONTAINER_NAME -v "$FONTS_PATH:/opt/fonts" idgis/geo-publisher-geoserver:$VERSION sh -c 'cp /opt/fonts/* /var/lib/geo-publisher/geoserver/styles/'
 	fi
 	 
-	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV $GS_ENV geo-publisher-geoserver:$VERSION"
+	create_container $GS_CONTAINER_NAME "docker run --name $GS_CONTAINER_NAME -h $GS_HOST -d --link base-zookeeper:zookeeper --link gp-$INSTANCE-db:db --volumes-from $GS_DATA_CONTAINER_NAME --volumes-from gp-$INSTANCE-dv-raster --restart=always $DOCKER_ENV $GS_ENV idgis/geo-publisher-geoserver:$VERSION"
 }
  
 # Stop and remove old geoserver containers:
@@ -299,7 +299,7 @@ function create_viewer () {
 	VIEWER_ENV="$VIEWER_ENV -e VIEWER_PASSWORD=$VIEWER_PASSWORD"
 	VIEWER_ENV="$VIEWER_ENV -e VIEWER_DOMAIN=$VIEWER_DOMAIN"
 
-	create_container $VIEWER_CONTAINER_NAME "docker run --name $VIEWER_CONTAINER_NAME -h $VIEWER_HOST -d --link base-zookeeper:zookeeper --restart=always $DOCKER_ENV $VIEWER_ENV geo-publisher-viewer:$VERSION"
+	create_container $VIEWER_CONTAINER_NAME "docker run --name $VIEWER_CONTAINER_NAME -h $VIEWER_HOST -d --link base-zookeeper:zookeeper --restart=always $DOCKER_ENV $VIEWER_ENV idgis/geo-publisher-viewer:$VERSION"
 }
 
 # Stop and remove old viewer containers:
