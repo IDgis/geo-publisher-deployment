@@ -73,9 +73,6 @@
 						<buildDirectory>${project.build.directory}/docker</buildDirectory>
 						<dockerDirectory>${basedir}/src/main/docker</dockerDirectory>
 						<imageName>${project.artifactId}:${project.version}</imageName>
-						<imageTags>
-							<imageTag>latest</imageTag>
-						</imageTags>
 					</configuration>
 
 					<executions>
