@@ -7,7 +7,7 @@
 	<name>Geo Publisher deployment</name>
 	
 	<properties>
-		<geo-publisher.version>1.4.0</geo-publisher.version>
+		<geo-publisher.version>1.4.1</geo-publisher.version>
 		<geopublisher-viewer.version>1.1</geopublisher-viewer.version>
 		<geoserver.version>2.6.1-gpo-3</geoserver.version>
 	</properties>
