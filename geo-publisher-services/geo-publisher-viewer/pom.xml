@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>nl.idgis.publisher.deployment</groupId>
 		<artifactId>geo-publisher-services</artifactId>
-		<version>1.4.7-SNAPSHOT</version>
+		<version>1.4.7</version>
 	</parent>
 	<artifactId>geo-publisher-viewer</artifactId>
 	<packaging>pom</packaging>
