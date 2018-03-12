@@ -1,0 +1,62 @@
+repositories {
+	mavenCentral artifactUrls: ['http://maven.geotoolkit.org/']
+	maven {
+		name "idgis-public"
+		url "http://nexus.idgis.eu/content/groups/public/"
+		credentials {
+			username nexusUser 
+			password nexusPassword
+		}
+	}
+	maven {
+		name "idgis-restricted"
+		url "http://nexus.idgis.eu/content/groups/restricted/"
+		credentials {
+			username nexusUser 
+			password nexusPassword
+		}
+	}
+}
+
+ext {
+	geopublisherVersion = '1.11.1'
+	aspectjVersion = '1.8.0'
+}
+
+configurations {
+	dist
+}
+
+dependencies {
+	dist "org.aspectj:aspectjweaver:${aspectjVersion}"
+	dist(group: 'nl.idgis.publisher', name: 'publisher-provider-app', version: geopublisherVersion, classifier: 'all') {
+		exclude group: 'publisher.publisher-provider', module: 'publisher-provider-protocol'
+		exclude group: 'publisher', module: 'publisher-commons'
+	}
+}
+
+task clean(type: Delete) {
+	delete "${project.buildDir}/dist"
+}
+
+task copyDependencies(type: Copy) {
+	from configurations.dist
+	into "${project.buildDir}/dist"
+	rename { name ->
+		def artifacts = configurations.dist.resolvedConfiguration.resolvedArtifacts
+		def artifact = artifacts.find { it.file.name == name }
+		"${artifact.name}.${artifact.extension}"
+	}
+}
+
+task copyEtc(type: Copy) {
+	from 'src/main/etc'
+	into "${project.buildDir}/dist"
+}
+
+task createZip(type: Zip, dependsOn: [copyDependencies, copyEtc]) {
+	from "${project.buildDir}/dist"
+	archiveName "${project.buildDir}/geo-publisher-provider-${geopublisherVersion}.zip"
+}
+
+task build(dependsOn: [clean, createZip])
