@@ -19,7 +19,7 @@ repositories {
 }
 
 ext {
-	geopublisherVersion = '1.12.11'
+	geopublisherVersion = '1.15.4'
 	aspectjVersion = '1.8.0'
 }
 
