@@ -1,25 +1,19 @@
 repositories {
-	mavenCentral artifactUrls: ['http://maven.geotoolkit.org/']
+	mavenCentral()
 	maven {
-		name "idgis-public"
-		url "http://nexus.idgis.eu/content/groups/public/"
-		credentials {
-			username nexusUser 
-			password nexusPassword
-		}
+		url "https://repo.deegree.org/content/repositories/public"
 	}
 	maven {
-		name "idgis-restricted"
-		url "http://nexus.idgis.eu/content/groups/restricted/"
+		url = "https://maven.pkg.github.com/IDgis/geo-publisher"
 		credentials {
-			username nexusUser 
-			password nexusPassword
+			username = System.getenv("GITHUB_USER") ?: ghUser
+			password = System.getenv("GITHUB_TOKEN") ?: ghKey
 		}
 	}
 }
 
 ext {
-	geopublisherVersion = '1.15.14'
+	geopublisherVersion = '1.18.4'
 	aspectjVersion = '1.8.0'
 }
 
